@@ -20,11 +20,33 @@ The transport-race gate lives under `extension/` but is `testIgnore`d from `play
 it loads its own tiny fixture rather than the built extension, so it needs no build and runs in
 seconds.
 
-## Prerequisites (once)
+## Prerequisites
+
+`pnpm test:e2e`, `pnpm test:e2e:build`, and `pnpm test:e2e:sync` install Playwright's
+matching Chromium before running tests. The first run, or a Playwright upgrade, may
+need a browser download; later runs reuse the installed version. If installation
+fails, the command stops before starting the suite.
+
+The extension needs the **full Chromium build**, not just `chromium-headless-shell`:
+its fixture uses `channel: "chromium"` to load MV3 extensions. Do not use `--only-shell`.
+
+When running Playwright directly, or using another suite, install the browser explicitly:
 
 ```sh
-pnpm exec playwright install chromium   # the full build, not just the headless shell
+pnpm exec playwright install chromium
 ```
+
+On supported Linux distributions, install system libraries too if they are missing
+(this may require administrator privileges):
+
+```sh
+pnpm exec playwright install --with-deps chromium
+```
+
+If Windows reports `Executable doesn't exist at ...\ms-playwright\chromium-...`,
+the browser for the installed Playwright version is missing. Run the explicit install
+command above from the repository root, then rerun the suite. `pnpm install` alone
+does not download Playwright's browsers.
 
 Every suite launches a real extension profile, so build it after source changes:
 

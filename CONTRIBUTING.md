@@ -86,6 +86,13 @@ pnpm run wasm:test     # just the Rust core
 pnpm run test:e2e      # Playwright, against a real Chromium with the extension loaded
 ```
 
+Before the first extension E2E run, build the WASM core with `pnpm run wasm:build`
+and the extension with `pnpm run build` (or use `pnpm run test:e2e:build` after the
+WASM build). The extension and sync E2E commands install the matching Playwright
+Chromium automatically, reusing it on later runs. A new browser version needs a
+download. For direct Playwright commands, Linux system dependencies, and Windows
+missing-executable errors, see [e2e/README.md](e2e/README.md#prerequisites).
+
 End-to-end tests do **not** run automatically on pull requests, because a fork PR
 can run arbitrary code. A maintainer opts in per PR by adding the `e2e` label.
 Run them locally before you push if your change touches autofill, unlock, or
