@@ -53,7 +53,7 @@
 		"test:desktop": "cd packages/platform-desktop/src-tauri && cargo test",
 		"test:e2e": "playwright install chromium && playwright test",
 		"test:e2e:android": "playwright test --config playwright.android.config.ts",
-		"test:e2e:sync": "playwright install chromium && playwright test --config playwright.sync.config.ts",
+		"test:e2e:sync": "playwright test --config playwright.sync.config.ts",
 		"test:e2e:build": "pnpm --filter @vault/platform-extension run build:chromium && pnpm run test:e2e",
 		"test:apt": "node scripts/test-apt-install.ts",
 		"test:nix": "node scripts/test-nix-build.ts",
