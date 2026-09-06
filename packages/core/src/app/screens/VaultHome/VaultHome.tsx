@@ -1,7 +1,7 @@
 import { Trans, useLingui } from "@lingui/react/macro";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { ChevronDown, ListChecks, type LucideIcon, TrendingDown, TrendingUp } from "lucide-react";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import type { Entry, EntryType } from "../../../hooks/useVault";
 import { AddDropdown } from "../../components/AddDropdown";
 import { EntryRow } from "../../components/EntryRow";
@@ -18,7 +18,7 @@ import {
 	toggleSelected,
 } from "./selection";
 import { VaultSearchBar } from "./VaultSearchBar";
-import { filterAndSortEntries, type VaultSearch } from "./vault-search";
+import { filterEntries, sortEntries, type VaultSearch } from "./vault-search";
 
 /** List-ready projection of an entry: shared id/name plus mode-contributed display fields. */
 export interface VaultListItem {
@@ -43,6 +43,7 @@ export interface VaultListItem {
 }
 
 interface VaultHomeProps {
+	tools?: ReactNode;
 	items: VaultListItem[];
 	search: VaultSearch;
 	onSearchChange: (patch: Partial<VaultSearch>) => void;
@@ -67,6 +68,7 @@ interface VaultHomeProps {
 
 /** Vault list screen with search, password-health stats, and the entry rows. */
 export function VaultHome({
+	tools,
 	items,
 	search,
 	onSearchChange,
@@ -82,7 +84,11 @@ export function VaultHome({
 	onToggleStats,
 }: VaultHomeProps) {
 	const { t } = useLingui();
-	const filtered = filterAndSortEntries(items, search, matchedIds);
+	const ordered = useMemo(
+		() => sortEntries(items, search.sort, matchedIds),
+		[items, search.sort, matchedIds],
+	);
+	const filtered = useMemo(() => filterEntries(ordered, search), [ordered, search]);
 
 	// Bulk selection. An explicit mode, not one derived from `selected.size`: emptying
 	// the selection is a normal thing to do mid-edit and must not throw the user out.
@@ -111,11 +117,22 @@ export function VaultHome({
 	// Every stat describes the LIVE vault. An archived entry is one the user has put out
 	// of use, so counting it would inflate "Total Items" and, worse, keep a breached
 	// password in "At Risk" long after they dealt with it by archiving the account.
-	const live = useMemo(() => items.filter((item) => !item.archived), [items]);
-	const archivedCount = items.length - live.length;
-	// "At Risk" / "Strong" are password-health stats, so they count logins only.
-	const atRisk = live.filter((item) => item.leaked).length;
-	const strong = live.filter((item) => item.type === "login" && !item.leaked).length;
+	const { liveCount, archivedCount, atRisk, strong } = useMemo(() => {
+		let liveCount = 0,
+			archivedCount = 0,
+			atRisk = 0,
+			strong = 0;
+		for (const item of items) {
+			if (item.archived) {
+				archivedCount++;
+				continue;
+			}
+			liveCount++;
+			if (item.leaked) atRisk++;
+			if (item.type === "login" && !item.leaked) strong++;
+		}
+		return { liveCount, archivedCount, atRisk, strong };
+	}, [items]);
 
 	// Virtualize the row list so a large vault (1000+ entries) mounts only the
 	// visible rows, not every EntryRow at once (the main open-time render cost).
@@ -137,7 +154,12 @@ export function VaultHome({
 				onChange={onSearchChange}
 				archivedCount={archivedCount}
 				tags={tags}
-				trailing={<AddDropdown onCreate={onCreate} />}
+				trailing={
+					<>
+						{tools}
+						<AddDropdown onCreate={onCreate} />
+					</>
+				}
 			/>
 
 			<button
@@ -160,7 +182,7 @@ export function VaultHome({
 							<p className="text-xs text-muted-foreground mb-0.5">
 								<Trans>Total Items</Trans>
 							</p>
-							<p className="text-2xl">{live.length}</p>
+							<p className="text-2xl">{liveCount}</p>
 						</div>
 					</div>
 					<div className="relative overflow-hidden px-4 py-3 rounded-lg border border-border/50 bg-linear-to-br from-card to-background backdrop-blur-sm">

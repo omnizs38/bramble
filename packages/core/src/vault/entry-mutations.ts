@@ -11,11 +11,13 @@ import type { Entry, EntryData } from "../hooks/useVault";
 import type { EntriesPayload, Hlc, HybridClock } from "../sync";
 import { encodeEntriesPayload } from "../sync";
 import { base64ToBytes } from "../util/bytes";
+import { mapConcurrent } from "../util/map-concurrent";
 import type { EncryptedEntry, VaultBlob } from "../vault-format";
 import { toAutofillIndex } from "./autofill-index";
 import { createEntriesBlobStore } from "./entries-blob";
 import { entryDataSchema } from "./entry-normalize";
 import { withPasswordChangelog } from "./password-changelog";
+import { entrySnapshot, previewDuplicateMerge } from "./personal-tools";
 import { normalizeTags, tagKey, tagsEqual } from "./tags";
 
 // Coalesce a burst of uses into one write.
@@ -34,6 +36,8 @@ export interface VaultEntries {
 }
 
 export interface EntryMutationsDeps {
+	/** Chromium personal builds bound pending offscreen encryption requests. */
+	encryptConcurrency?: number;
 	crypto: Pick<CryptoAdapter, "encryptEntry" | "encryptWithVek" | "decryptWithVek">;
 	storage: Pick<StorageAdapter, "writeVaultBlob">;
 	autofill: Pick<AutofillAdapter, "beginIndexUpdate" | "setIndex">;
@@ -44,6 +48,8 @@ export interface EntryMutationsDeps {
 
 export interface EntryMutations {
 	add(current: VaultEntries, data: EntryData): Promise<VaultEntries>;
+	/** Create a merged copy and archive (never delete) reviewed originals in one write. */
+	mergeDuplicates(current: VaultEntries, reviewed: Entry[]): Promise<VaultEntries>;
 	importMany(current: VaultEntries, items: EntryData[]): Promise<VaultEntries>;
 	update(current: VaultEntries, id: string, data: EntryData): Promise<VaultEntries>;
 	remove(current: VaultEntries, id: string): Promise<VaultEntries>;
@@ -100,8 +106,10 @@ export function createEntryMutations(deps: EntryMutationsDeps): EntryMutations {
 
 	// Encrypt each entry under a fresh DEK and pair it with its stamp.
 	const buildPayload = async (next: VaultEntries): Promise<EntriesPayload> => {
-		const entries: EncryptedEntry[] = await Promise.all(
-			next.entries.map(async (entry) => {
+		const entries: EncryptedEntry[] = await mapConcurrent(
+			next.entries,
+			deps.encryptConcurrency ?? Number.POSITIVE_INFINITY,
+			async (entry) => {
 				const { id, ...data } = entry;
 				const enc = await crypto.encryptEntry(JSON.stringify(data));
 				const hlc = next.stamps.get(id);
@@ -114,7 +122,7 @@ export function createEntryMutations(deps: EntryMutationsDeps): EntryMutations {
 					iv: enc.iv,
 					hlc,
 				};
-			}),
+			},
 		);
 		return { entries, tombstones: [...next.tombstones].map(([id, hlc]) => ({ id, hlc })) };
 	};
@@ -301,6 +309,37 @@ export function createEntryMutations(deps: EntryMutationsDeps): EntryMutations {
 				stamps,
 				tombstones: current.tombstones,
 			});
+		},
+
+		mergeDuplicates: async (current, reviewed) => {
+			const selected = reviewed.map((old) => current.entries.find((entry) => entry.id === old.id));
+			if (
+				selected.some(
+					(entry, index) => !entry || entrySnapshot(entry) !== entrySnapshot(reviewed[index]),
+				)
+			) {
+				throw new Error("Entries changed. Open a new preview before merging.");
+			}
+			const plan = previewDuplicateMerge(selected as Entry[]);
+			if (!plan.ok)
+				throw new Error(
+					"These entries cannot be merged safely. Review their differences manually.",
+				);
+			const valid = validate(plan.data);
+			const c = await clock();
+			const hlc = c.send();
+			const id = globalThis.crypto.randomUUID();
+			const ids = new Set(plan.sourceIds);
+			const stamps = new Map(current.stamps);
+			const entries = current.entries.map((entry) => {
+				if (!ids.has(entry.id)) return entry;
+				const stamp = c.send();
+				stamps.set(entry.id, stamp);
+				return { ...entry, archivedAt: stamp.wall };
+			});
+			stamps.set(id, hlc);
+			entries.push({ ...valid, id, createdAt: valid.createdAt ?? hlc.wall, updatedAt: hlc.wall });
+			return persist({ entries, stamps, tombstones: current.tombstones });
 		},
 
 		update: async (current, id, data) => {

@@ -90,8 +90,9 @@ export function parseQuery(q: string): ParsedQuery {
 	return { text, tags };
 }
 
+const nameCollator = new Intl.Collator(undefined, { sensitivity: "base" });
 function byName(a: SearchableEntry, b: SearchableEntry): number {
-	return a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+	return nameCollator.compare(a.name, b.name);
 }
 
 // Missing timestamps sort last; ties fall back to name A->Z for a stable order.
@@ -160,6 +161,22 @@ export function filterAndSortEntries<T extends SearchableEntry>(
 	search: VaultSearch,
 	matchedIds?: ReadonlySet<string>,
 ): T[] {
+	return sortEntries(filterEntries(items, search), search.sort, matchedIds);
+}
+
+/** Sort once per entry/rank/order change, not once per typed character. */
+export function sortEntries<T extends SearchableEntry>(
+	items: T[],
+	sort: SortKey,
+	matchedIds?: ReadonlySet<string>,
+): T[] {
+	const cmp = COMPARATORS[sort];
+	const rank = (item: SearchableEntry) => (matchedIds?.has(item.id) ? 0 : 1);
+	return [...items].sort((a, b) => rank(a) - rank(b) || cmp(a, b));
+}
+
+/** Filter an already ordered list. No sorting, secret cache, or mutation of the input. */
+export function filterEntries<T extends SearchableEntry>(items: T[], search: VaultSearch): T[] {
 	const { text, tags } = parseQuery(search.q);
 	const filtered = items.filter((item) => {
 		// The archive side is a hard gate, ahead of the query: searching the live vault must
@@ -171,8 +188,5 @@ export function filterAndSortEntries<T extends SearchableEntry>(
 		if (tags.length > 0 && !tags.every((t) => keys?.some((k) => k.startsWith(t)))) return false;
 		return text.every((tok) => item.searchText.includes(tok));
 	});
-	const cmp = COMPARATORS[search.sort];
-	if (!matchedIds?.size) return filtered.sort(cmp);
-	const rank = (i: SearchableEntry) => (matchedIds.has(i.id) ? 0 : 1);
-	return filtered.sort((a, b) => rank(a) - rank(b) || cmp(a, b));
+	return filtered;
 }

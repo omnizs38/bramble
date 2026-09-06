@@ -260,3 +260,54 @@ describe("tag completion", () => {
 		expect(completeTagFragment("", "work")).toBe("#work ");
 	});
 });
+
+describe("separate ordering and filtering", () => {
+	it("matches the legacy filter-then-sort result without resorting for text changes", async () => {
+		const { sortEntries, filterEntries } = await import("./vault-search");
+		const items = Array.from({ length: 200 }, (_, i) =>
+			item({
+				id: String(i),
+				name: `Name ${i % 17}`,
+				searchText: `name ${i} account`,
+				type: i % 3 ? "login" : "note",
+				archived: i % 4 === 0,
+				lastUsedAt: i % 5 ? i : undefined,
+				tagKeys: [i % 2 ? "work" : "home"],
+			}),
+		);
+		for (const sort of [
+			"name-asc",
+			"name-desc",
+			"recent-used",
+			"recent-added",
+			"recent-updated",
+		] as const) {
+			const matches = new Set(["5", "10", "15"]);
+			const ordered = sortEntries(items, sort, matches);
+			for (const q of ["", "account 1", "#work", "#ho name"])
+				for (const archived of [true, false]) {
+					const request = search({ sort, q, archived });
+					// Independent filter-first comparator verifies the optimization's ordering contract.
+					const candidates = filterEntries(items, request);
+					const byName = (a: SearchableEntry, b: SearchableEntry) =>
+						a.name.localeCompare(b.name, undefined, { sensitivity: "base" });
+					const compare = (a: SearchableEntry, b: SearchableEntry) => {
+						const rank = Number(matches.has(b.id)) - Number(matches.has(a.id));
+						if (rank) return rank;
+						if (sort === "name-asc") return byName(a, b);
+						if (sort === "name-desc") return byName(b, a);
+						const key =
+							sort === "recent-used"
+								? "lastUsedAt"
+								: sort === "recent-added"
+									? "createdAt"
+									: "updatedAt";
+						return (b[key] ?? -Infinity) - (a[key] ?? -Infinity) || byName(a, b);
+					};
+					expect(filterEntries(ordered, request).map((e) => e.id)).toEqual(
+						candidates.sort(compare).map((e) => e.id),
+					);
+				}
+		}
+	});
+});

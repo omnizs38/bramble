@@ -11,7 +11,7 @@ import {
 } from "react";
 import type { IndexEntry, SubdomainMatchMode } from "../adapters/autofill";
 import type { BiometryType } from "../adapters/biometric";
-import { usePlatform } from "../context/PlatformContext";
+import { useCan, usePlatform } from "../context/PlatformContext";
 import {
 	decodeVaultBlob,
 	type EncryptedEntry,
@@ -308,6 +308,7 @@ export interface VaultActions {
 	 */
 	exportToApp(): Promise<string[]>;
 	addEntry(data: EntryData): Promise<void>;
+	mergeDuplicateEntries(reviewed: Entry[]): Promise<void>;
 	importEntries(items: EntryData[]): Promise<void>;
 	updateEntry(id: string, data: EntryData): Promise<void>;
 	deleteEntry(id: string): Promise<void>;
@@ -379,6 +380,7 @@ const VaultStateContext = createContext<VaultState | null>(null);
 const VaultActionsContext = createContext<VaultActions | null>(null);
 
 export function VaultProvider({ children }: { children: ReactNode }) {
+	const personalTools = useCan("personalVaultTools");
 	const {
 		storage: platformStorage,
 		crypto: platformCrypto,
@@ -1028,8 +1030,16 @@ export function VaultProvider({ children }: { children: ReactNode }) {
 	// each is a transition that persists and returns the next state, which we
 	// commit here. The shared persist primitives also back the sync-enrollment hook.
 	const mutations = useMemo(
-		() => createEntryMutations({ crypto, storage, autofill, readDecodedBlob, clock: ensureClock }),
-		[crypto, storage, autofill, readDecodedBlob, ensureClock],
+		() =>
+			createEntryMutations({
+				crypto,
+				storage,
+				autofill,
+				readDecodedBlob,
+				clock: ensureClock,
+				encryptConcurrency: personalTools ? 8 : undefined,
+			}),
+		[crypto, storage, autofill, readDecodedBlob, ensureClock, personalTools],
 	);
 
 	// Snapshot the current entry state (latest entries + the stamp/tombstone refs).
@@ -1055,6 +1065,15 @@ export function VaultProvider({ children }: { children: ReactNode }) {
 		async (data: EntryData) => commitEntries(await mutations.add(snapshotEntries(), data)),
 		[mutations, snapshotEntries, commitEntries],
 	);
+	const mergeDuplicateEntries = useCallback(
+		async (reviewed: Entry[]) => {
+			if (!personalTools || latestRef.current.isLocked)
+				throw new Error("Unlock a supported vault before merging.");
+			commitEntries(await mutations.mergeDuplicates(snapshotEntries(), reviewed));
+		},
+		[mutations, snapshotEntries, commitEntries, personalTools],
+	);
+
 	const importEntries = useCallback(
 		async (items: EntryData[]) =>
 			commitEntries(await mutations.importMany(snapshotEntries(), items)),
@@ -1654,6 +1673,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
 			exportKdbx,
 			exportToApp,
 			addEntry,
+			mergeDuplicateEntries,
 			importEntries,
 			updateEntry,
 			deleteEntry,
@@ -1691,6 +1711,7 @@ export function VaultProvider({ children }: { children: ReactNode }) {
 			exportKdbx,
 			exportToApp,
 			addEntry,
+			mergeDuplicateEntries,
 			importEntries,
 			updateEntry,
 			deleteEntry,

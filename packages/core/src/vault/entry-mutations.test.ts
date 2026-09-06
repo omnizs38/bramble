@@ -528,3 +528,57 @@ describe("createEntryMutations", () => {
 		expect(JSON.stringify(latest)).not.toContain("old");
 	});
 });
+
+describe("personal duplicate merge", () => {
+	it("writes once, retains archived originals, and creates no tombstones", async () => {
+		const h = harness();
+		const before = await h.mutations.importMany(empty(), [
+			loginWith("One", { urls: ["https://example.com"], notes: "one" }),
+			loginWith("Two", { urls: ["https://example.com"], notes: "two" }),
+		]);
+		const snapshot = structuredClone(before);
+		const after = await h.mutations.mergeDuplicates(before, structuredClone(before.entries));
+		expect(h.writes()).toBe(2);
+		expect(after.entries).toHaveLength(3);
+		expect(after.tombstones.size).toBe(0);
+		for (const original of before.entries) {
+			const archived = after.entries.find((e) => e.id === original.id)!;
+			expect(archived.archivedAt).toBeDefined();
+			const { archivedAt: _archivedAt, ...rest } = archived;
+			expect(rest).toEqual(original);
+		}
+		expect(after.entries.filter((e) => e.archivedAt === undefined)).toHaveLength(1);
+		expect(before).toEqual(snapshot);
+		const payload = await h.mutations.readEntriesPayload();
+		expect(payload.entries).toHaveLength(3);
+	});
+	it("rejects changed or deleted sources without writing", async () => {
+		const h = harness();
+		const before = await h.mutations.importMany(empty(), [
+			loginWith("One", { urls: ["https://example.com"] }),
+			loginWith("Two", { urls: ["https://example.com"] }),
+		]);
+		const reviewed = structuredClone(before.entries);
+		const edited = {
+			...before,
+			entries: before.entries.map((e, i) => (i ? e : { ...e, notes: "changed" })),
+		};
+		await expect(h.mutations.mergeDuplicates(edited, reviewed)).rejects.toThrow("Entries changed");
+		await expect(
+			h.mutations.mergeDuplicates({ ...before, entries: before.entries.slice(1) }, reviewed),
+		).rejects.toThrow("Entries changed");
+		expect(h.writes()).toBe(1);
+	});
+	it("does not overwrite different passwords or change archived sources", async () => {
+		const h = harness();
+		const before = await h.mutations.importMany(empty(), [
+			loginWith("One", { urls: ["https://example.com"] }),
+			loginWith("Two", { urls: ["https://example.com"], password: "other" }),
+		]);
+		await expect(h.mutations.mergeDuplicates(before, before.entries)).rejects.toThrow(
+			"cannot be merged safely",
+		);
+		expect(h.writes()).toBe(1);
+		expect(before.entries.every((e) => e.archivedAt === undefined)).toBe(true);
+	});
+});

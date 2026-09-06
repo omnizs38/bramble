@@ -70,7 +70,8 @@
 		"package:desktop": "node scripts/release-desktop.mjs",
 		"personal:build": "node scripts/personal/build.mjs",
 		"personal:check": "node --test scripts/personal/*.test.mjs",
-		"personal:audit": "node scripts/personal/audit.mjs"
+		"personal:audit": "node scripts/personal/audit.mjs",
+		"personal:bench": "node scripts/personal/bench-search.mjs"
 	},
 	"devDependencies": {
 		"@anthropic-ai/sdk": "^0.106.0",

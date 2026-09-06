@@ -68,6 +68,13 @@ type Capability =
 	| { chromium: boolean; firefox: boolean; android: boolean; ios: boolean; desktop: boolean };
 
 export const CAPABILITIES = {
+	personalVaultTools: {
+		chromium: true,
+		firefox: false,
+		android: false,
+		ios: false,
+		desktop: false,
+	},
 	// Desktop is already a window, so there is nothing to detach into.
 	popOut: { extension: true, mobile: false, desktop: false },
 	// Desktop webcams exist, but webview camera access is inconsistent across the three

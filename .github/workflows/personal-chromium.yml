@@ -48,6 +48,8 @@ jobs:
           exit "$status"
       - name: Build fresh WASM, verify crypto, and build Chromium
         run: pnpm run personal:build
+      - name: Record synthetic search benchmark (equivalence checked, no speed threshold)
+        run: node scripts/personal/bench-search.mjs > personal-reports/search-benchmark.json
       - name: Typecheck extension and shared dependencies
         run: pnpm --filter '@vault/platform-extension...' run typecheck
       - name: Lint

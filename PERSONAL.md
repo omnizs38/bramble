@@ -107,3 +107,45 @@ full commit SHAs remain pinned. No npm versions or npm lockfile entries were cha
 Local verification after the Rust updates: the full `personal:build` command passed,
 including fresh WASM, the crypto behavior verifier, the Chromium Vite build, and
 artifact validation. This does not replace a green browser E2E run in CI.
+
+## Saved searches and duplicate review (Chromium only)
+
+Open **Vault tools** on the unlocked vault's home screen. The panel's UI is loaded on demand.
+The capability is disabled for Firefox, mobile and desktop builds.
+
+- **Saved searches** store query, type, sort and archive view in an ordinary encrypted note
+  tagged `saved-search`. This intentionally reuses vault encryption, rotation, export, recovery
+  and sync rather than introducing plaintext preferences or a separate key store. The notes
+  remain visible in the normal vault; editing their JSON can invalidate the shortcut, but never
+  silently deletes the note. Up to 30 active shortcuts, 80-character labels and 256-character queries.
+- **Find duplicates** scans active logins only, on demand. Candidate grouping requires matching
+  usernames (case-sensitive) and the same complete set of HTTP(S) origins. It never broadens to
+  eTLD+1, guesses from bare hostnames, or sends credentials to a server.
+- **Preview merge** shows descriptions and names of conflicting fields, never password/TOTP/
+  private-key values. Different credentials, URLs, policies, passkeys, password histories or
+  unknown fields block automatic merging. Notes/tags can be combined, and the first name is shown
+  as the merged name. Review at most 20 logins per merge.
+- **Confirm merge and archive originals** is a separate confirmation. It rejects a changed/deleted
+  source snapshot, creates a merged copy and archives the exact originals in one vault write.
+  Nothing is deleted or tombstoned; restore originals through Archive. Failure does not commit
+  the new React state. This uses the existing storage/sync write path; it is not a new cross-device
+  transaction protocol.
+
+The panel disappears when the vault locks. All tests use synthetic entries.
+
+## Further performance changes
+
+- The vault home sorts when entries, sort order or current-site ranking change, not on each
+  query keystroke. Filtering preserves the previous archive/type/tag semantics and stable ordering.
+- Name sorting reuses an `Intl.Collator`; summary counts use one memoized pass.
+- Chromium personal builds limit in-flight per-entry encryption calls to eight, preserving output
+  order and stopping new work after an error. No ciphertext/key cache is introduced; `sealAll`
+  still re-encrypts both layers during key rotation. This reduces queued work, not the number of
+  entries that ultimately need encryption. Other platforms keep their previous concurrency.
+- `pnpm run personal:bench` compares a fixed eight-query typing sequence over 10,000 synthetic
+  entries, verifies result equivalence and records five alternating-order trials. CI includes the
+  raw timings in its report artifact. There is no flaky timing threshold and no claim that this
+  measures complete browser startup, autofill latency or process RAM.
+
+The personal E2E suite additionally checks saved-search persistence with no plaintext local
+preferences, and merge/Archive behavior using the real extension and WASM.
