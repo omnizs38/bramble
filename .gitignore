@@ -64,3 +64,6 @@ playwright-report/
 # before this existed.
 packages/platform-desktop/macos/build/
 *.provisionprofile
+
+# Local audit/build inventories for the personal Chromium branch.
+/personal-reports/

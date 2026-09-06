@@ -1,0 +1,89 @@
+name: Personal Chromium
+
+on:
+  push:
+    branches: [personal/chromium]
+  workflow_dispatch:
+
+# This workflow cannot publish releases, push commits, or access upstream secrets.
+permissions:
+  contents: read
+concurrency:
+  group: personal-chromium-${{ github.ref }}
+  cancel-in-progress: true
+jobs:
+  chromium:
+    if: github.repository == 'omnizs38/bramble' && github.ref == 'refs/heads/personal/chromium'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 50
+    env:
+      CI: "true"
+      TARGET: chromium
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4
+      - uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: 24
+          cache: pnpm
+      - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1
+      - uses: taiki-e/install-action@7b8d4719ee4aaa279bdf55df38dacb9ebfe12a6c # v2
+        with:
+          tool: wasm-pack@0.13.1,cargo-audit@0.22.2
+      - name: Install the locked dependency graph
+        run: pnpm install --frozen-lockfile
+      - name: Test artifact safety checks
+        run: pnpm run personal:check
+      - name: Audit npm production dependencies and report tool advisories
+        run: pnpm run personal:audit
+      - name: Audit the Rust crypto lockfile (no advisory exceptions)
+        working-directory: packages/core-rust
+        run: |
+          set +e
+          cargo audit --json > ../../personal-reports/rust-audit.json
+          status=$?
+          cat ../../personal-reports/rust-audit.json
+          exit "$status"
+      - name: Build fresh WASM, verify crypto, and build Chromium
+        run: pnpm run personal:build
+      - name: Typecheck extension and shared dependencies
+        run: pnpm --filter '@vault/platform-extension...' run typecheck
+      - name: Lint
+        run: pnpm run ci:check
+      - name: Rust crypto tests
+        run: cargo test --manifest-path packages/core-rust/Cargo.toml --locked
+      - name: Extension and shared unit tests
+        run: pnpm --filter '@vault/platform-extension...' run test
+      - name: Install Chromium for browser tests
+        run: pnpm exec playwright install --with-deps chromium
+      - name: Chromium extension E2E (no retries hiding flakes)
+        run: pnpm run test:e2e --retries=0
+      - name: Chromium document-bound transport security test
+        run: pnpm run test:transport-race --project=chromium --retries=0
+      - name: Record verified artifact inventory
+        run: |
+          node scripts/personal/verify-build.mjs > personal-reports/build-inventory.json
+          git rev-parse HEAD > personal-reports/commit.txt
+          node --version > personal-reports/node-version.txt
+          pnpm --version > personal-reports/pnpm-version.txt
+          rustc --version > personal-reports/rust-version.txt
+      - name: Upload development build only after all gates pass
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: bramble-personal-chromium-${{ github.sha }}
+          path: packages/platform-extension/dist-chromium
+          if-no-files-found: error
+          retention-days: 14
+      - name: Upload audit reports and diagnostics (even on failure)
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: personal-chromium-reports-${{ github.sha }}
+          path: |
+            personal-reports
+            test-results
+            playwright-report
+          if-no-files-found: warn
+          retention-days: 7

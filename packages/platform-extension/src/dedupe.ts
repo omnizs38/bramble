@@ -14,16 +14,27 @@ export interface HostnameMatchable {
 
 /** Whether a login entry matches a page host under its subdomainMatch policy (default eTLD+1). */
 export function hostnameMatches(entry: HostnameMatchable, pageHostname: string): boolean {
+	return createHostnameMatcher(pageHostname)(entry);
+}
+
+/** One query-scoped matcher; no global cache or retained vault/credential data. */
+export function createHostnameMatcher(pageHostname: string): (entry: HostnameMatchable) => boolean {
 	const pageHost = pageHostname.toLowerCase();
-	const policy = entry.subdomainMatch ?? "etld1";
-	// Compute the page side once for this entry's hostnames. Unknown stored policies
-	// follow the same eTLD+1 fallback as hostnameMatchesEntry's default branch.
-	const pageDomain =
-		policy === "exact" || policy === "subdomain" ? pageHost : registrableDomain(pageHost);
-	for (const raw of entry.hostnames) {
-		if (hostnameMatchesEntry(raw, policy, pageHost, pageDomain)) return true;
-	}
-	return false;
+	let pageDomain: string | undefined;
+	return (entry) => {
+		const policy = entry.subdomainMatch ?? "etld1";
+		// Exact/subdomain checks need no PSL work. Unknown persisted policies keep
+		// the existing full-PSL fallback; never approximate security boundaries.
+		let domain = pageHost;
+		if (policy !== "exact" && policy !== "subdomain") {
+			pageDomain ??= registrableDomain(pageHost);
+			domain = pageDomain;
+		}
+		for (const raw of entry.hostnames) {
+			if (hostnameMatchesEntry(raw, policy, pageHost, domain)) return true;
+		}
+		return false;
+	};
 }
 
 /** Single-hostname check with the page side precomputed (see hostnameMatches). */
@@ -59,9 +70,10 @@ export function dedupeCapture(
 ): DedupeOutcome {
 	if (!index) return { kind: "save" };
 	const candidates: LoginIndexEntry[] = [];
+	const matchesHostname = createHostnameMatcher(hostname);
 	for (const entry of index.values()) {
 		if (entry.type !== "login") continue;
-		if (!hostnameMatches(entry, hostname)) continue;
+		if (!matchesHostname(entry)) continue;
 		if (entry.username === username && entry.password === password) {
 			return { kind: "exact" };
 		}

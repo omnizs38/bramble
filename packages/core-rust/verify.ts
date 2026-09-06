@@ -1,3 +1,4 @@
+import { throws } from "node:assert/strict";
 import { readFileSync } from "node:fs";
 import init, {
 	decrypt_entry,
@@ -29,12 +30,8 @@ const assertEq = (label: string, a: unknown, b: unknown) => {
 };
 
 const expectThrow = (label: string, fn: () => unknown) => {
-	try {
-		fn();
-		throw new Error(`${label}: expected throw, none happened`);
-	} catch (e) {
-		console.log(`  ok  ${label} (threw: ${(e as Error).message})`);
-	}
+	throws(fn, undefined, label);
+	console.log(`  ok  ${label} (threw)`);
 };
 
 const MAGIC_VERSION = new Uint8Array([0x56, 0x4c, 0x54, 0x31, 0x02]);

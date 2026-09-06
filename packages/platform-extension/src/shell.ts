@@ -4,7 +4,7 @@ import type { OptionsScreen, PopOutHandoff, ShellAdapter } from "@core/adapters/
 import type { Target } from "@core/flags";
 import { extractHostname } from "@core/vault/autofill-index";
 import { setWebauthnInterceptionPauser, setWebauthnRpId } from "@core/vault/webauthn-ceremony";
-import { hostnameMatches } from "./dedupe";
+import { createHostnameMatcher } from "./dedupe";
 import { api } from "./platform-api";
 import { ACTIVE_VAULT_SESSION_KEY } from "./session-keys";
 import {
@@ -146,10 +146,11 @@ export const extensionShell: ShellAdapter = {
 		const origin = await this.getCurrentTabOrigin();
 		if (!origin) return [];
 		const host = new URL(origin).hostname;
+		const matchesHostname = createHostnameMatcher(host);
 		return logins
 			.filter((l) => {
 				const hostnames = l.urls.map(extractHostname).filter((h) => h.length > 0);
-				return hostnameMatches({ hostnames, subdomainMatch: l.subdomainMatch }, host);
+				return matchesHostname({ hostnames, subdomainMatch: l.subdomainMatch });
 			})
 			.map((l) => l.id);
 	},

@@ -13,6 +13,7 @@ import { extractHostname } from "@core/vault/autofill-index";
 import { normalizeEntryData } from "@core/vault/entry-normalize";
 import { CryptoDecryptIndexResultSchema } from "../crypto/messages";
 import {
+	createHostnameMatcher,
 	type DedupeOutcome,
 	dedupeCapture as dedupeCaptureFn,
 	hostnameMatches,
@@ -211,9 +212,10 @@ function queryResult(
 	const logins: MatchSummary[] = [];
 	const cards: MatchSummary[] = [];
 	const otps: MatchSummary[] = [];
+	const matchesHostname = createHostnameMatcher(hostname);
 	for (const entry of index.values()) {
 		if (entry.type === "login") {
-			if (!hostnameMatches(entry, hostname)) continue;
+			if (!matchesHostname(entry)) continue;
 			if (hasLogin) {
 				logins.push({
 					id: entry.id,
