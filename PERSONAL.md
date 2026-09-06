@@ -66,7 +66,7 @@ The production npm audit reported no known advisories. The full workspace audit 
 These are tool dependencies, not evidence of a Chromium runtime vulnerability. They remain
 visible in the whole-workspace report; they are not suppressed or automatically overridden.
 The CI production audit blocks on any known advisory, while tool advisories are reported as
-warnings. Rust audit failures and registry errors block the pipeline. The audit databases
+warnings. Rust audit failures (including unsoundness warnings) and registry errors block the pipeline. The audit databases
 change over time; zero advisories does not mean all vulnerabilities have been excluded.
 
 ## First changes and limits
@@ -84,3 +84,26 @@ permissions, and the vault format are unchanged.
 The new code needs its own green CI run; previous Chromium E2E results for `64ce489d` are
 not results for this personal branch. Larger optimizations and user-facing features are
 separate follow-up changes after choosing their scope and measuring a baseline.
+
+## Rust audit follow-up
+
+The first CI run correctly blocked its artifact on five Rust advisories; local reproduction
+also reported an unsoundness warning. The personal branch now updates only the affected
+packages and required transitive dependencies:
+
+- `quick-xml` 0.37.5 → 0.41.0 (RUSTSEC-2026-0194 / RUSTSEC-2026-0195).
+- `rkyv` and `rkyv_derive` 0.8.16 → 0.8.18 (RUSTSEC-2026-0233 / 0234 / 0235).
+- `anyhow` 1.0.102 → 1.0.104 (RUSTSEC-2026-0190).
+
+The XML adapter handles the newer parser's separate entity-reference events without losing
+text or decoding twice, and rejects duplicate `Protected` attributes. Regressions cover named
+and numeric entities, key files, invalid references, and duplicate attributes. The Rust suite
+passed locally: 78 passed, 2 ignored benchmarks. The updated crypto lockfile audit reports
+zero known vulnerabilities and no warnings, with no advisory exceptions.
+
+The new CI action versions for pnpm setup and artifact upload use Node 24 directly; their
+full commit SHAs remain pinned. No npm versions or npm lockfile entries were changed.
+
+Local verification after the Rust updates: the full `personal:build` command passed,
+including fresh WASM, the crypto behavior verifier, the Chromium Vite build, and
+artifact validation. This does not replace a green browser E2E run in CI.

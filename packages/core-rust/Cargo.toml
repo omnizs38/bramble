@@ -101,7 +101,7 @@ aes = "0.8"
 cbc = { version = "0.1", features = ["alloc"] }
 chacha20 = "0.9"
 flate2 = "1"        # default backend is pure-Rust miniz_oxide -> wasm-clean
-quick-xml = "0.37"
+quick-xml = "0.41"
 
 # Host-only: build.rs parses packages/core/src/flags.json to generate feature-flag constants; not
 # shipped in the binary.

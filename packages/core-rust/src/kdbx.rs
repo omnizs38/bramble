@@ -277,6 +277,32 @@ fn decode_hex32(hex: &[u8]) -> Option<[u8; 32]> {
     Some(out)
 }
 
+// quick-xml emits entity references as separate events. Decode exactly once and
+// append the pieces; re-unescaping Text would corrupt literal "&lt;" values.
+fn xml_text_piece(event: Event<'_>) -> Res<String> {
+    match event {
+        Event::Text(t) => t
+            .decode()
+            .map(|s| s.into_owned())
+            .map_err(|_| KdbxError::Corrupt("xml text")),
+        Event::GeneralRef(r) => {
+            if let Some(c) = r
+                .resolve_char_ref()
+                .map_err(|_| KdbxError::Corrupt("xml reference"))?
+            {
+                return Ok(c.to_string());
+            }
+            let name = r
+                .decode()
+                .map_err(|_| KdbxError::Corrupt("xml reference"))?;
+            quick_xml::escape::resolve_predefined_entity(&name)
+                .map(str::to_owned)
+                .ok_or(KdbxError::Corrupt("xml entity"))
+        }
+        _ => Err(KdbxError::Corrupt("xml text event")),
+    }
+}
+
 /// Parse a KeePass XML key file's `<Data>` value (v2.0 hex, v1.0 base64).
 /// Returns None if the bytes don't look like an XML key file.
 fn parse_xml_keyfile(bytes: &[u8]) -> Option<[u8; 32]> {
@@ -297,8 +323,8 @@ fn parse_xml_keyfile(bytes: &[u8]) -> Option<[u8; 32]> {
                 b"Data" => in_data = true,
                 _ => {}
             },
-            Ok(Event::Text(t)) => {
-                let txt = t.unescape().ok()?.into_owned();
+            Ok(event @ (Event::Text(_) | Event::GeneralRef(_))) => {
+                let txt = xml_text_piece(event).ok()?;
                 if in_version {
                     version.push_str(txt.trim());
                 } else if in_data {
@@ -556,21 +582,24 @@ fn parse_inner_xml(xml: &[u8], inner_stream_key: &[u8]) -> Res<Vec<OutEntry>> {
                 b"Value" => {
                     mode = Mode::Value;
                     cur_val.clear();
-                    protected = e
-                        .attributes()
-                        .flatten()
-                        .any(|a| a.key.as_ref() == b"Protected" && a.value.as_ref() == b"True");
+                    protected = false;
+                    for attr in e.attributes() {
+                        let attr = attr.map_err(|_| KdbxError::Corrupt("xml attribute"))?;
+                        if attr.key.as_ref() == b"Protected" && attr.value.as_ref() == b"True" {
+                            protected = true;
+                        }
+                    }
                 }
                 _ => {}
             },
-            Ok(Event::Text(t)) => {
-                let txt = t.unescape().map_err(|_| KdbxError::Corrupt("xml unescape"))?.into_owned();
+            Ok(event @ (Event::Text(_) | Event::GeneralRef(_))) => {
+                let txt = xml_text_piece(event)?;
                 match mode {
-                    Mode::Key => cur_key = txt,
-                    Mode::Value | Mode::Tags => cur_val = txt,
+                    Mode::Key => cur_key.push_str(&txt),
+                    Mode::Value | Mode::Tags => cur_val.push_str(&txt),
                     Mode::GroupName => {
                         if let Some(n) = group_names.last_mut() {
-                            *n = txt;
+                            n.push_str(&txt);
                         }
                     }
                     Mode::None => {}
@@ -1209,5 +1238,58 @@ mod export_tests {
         let read = open_inner(&bytes, "pw", None).unwrap();
         assert_eq!(read.len(), 8);
         assert_eq!(find(&read[7], "Notes").map(str::len), Some(300_000));
+    }
+}
+
+#[cfg(test)]
+mod personal_xml_regressions {
+    use super::*;
+
+    #[test]
+    fn split_entities_are_appended_and_decoded_exactly_once() {
+        let xml = br#"<KeePassFile><Root><Group><Name>A &amp; B</Name><Entry><String><Key>User&amp;Name</Key><Value>left &amp;lt; &lt; &#65; &#x1F512; &quot;&apos; right</Value></String><Tags>x&amp;y</Tags></Entry></Group></Root></KeePassFile>"#;
+        let entries = parse_inner_xml(xml, &[7; 32]).unwrap();
+        assert_eq!(entries.len(), 1);
+        let field = entries[0]
+            .strings
+            .iter()
+            .find(|s| s.key == "User&Name")
+            .unwrap();
+        assert_eq!(field.value, "left &lt; < A 🔒 \"' right");
+        assert!(entries[0]
+            .strings
+            .iter()
+            .any(|s| s.key == TAGS_KEY && s.value.contains("x&y")));
+    }
+
+    #[test]
+    fn xml_keyfile_supports_numeric_entities() {
+        let xml = format!(
+            "<KeyFile><Meta><Version>&#50;.0</Version></Meta><Key><Data>{}</Data></Key></KeyFile>",
+            "0&#48;".repeat(32)
+        );
+        assert_eq!(parse_xml_keyfile(xml.as_bytes()), Some([0; 32]));
+    }
+
+    #[test]
+    fn unknown_and_invalid_entities_fail_closed() {
+        for text in ["&custom;", "&#x110000;", "&#invalid;"] {
+            let xml =
+                format!("<Entry><String><Key>Title</Key><Value>{text}</Value></String></Entry>");
+            assert!(parse_inner_xml(xml.as_bytes(), &[7; 32]).is_err());
+        }
+    }
+
+    #[test]
+    fn duplicate_protected_attributes_are_rejected() {
+        for attributes in [
+            r#"Protected="False" Protected="True""#,
+            r#"Protected="True" Protected="False""#,
+        ] {
+            let xml = format!(
+                "<Entry><String><Key>Title</Key><Value {attributes}></Value></String></Entry>"
+            );
+            assert!(parse_inner_xml(xml.as_bytes(), &[7; 32]).is_err());
+        }
     }
 }
