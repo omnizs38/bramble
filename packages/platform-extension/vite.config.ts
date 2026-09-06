@@ -60,8 +60,10 @@ export default defineConfig({
 		outDir,
 		emptyOutDir: true,
 		chunkSizeWarningLimit: 600,
-		// Chrome 116+ has native modulepreload; dropping the polyfill keeps autofill-ui flat.
-		modulePreload: { polyfill: false },
+		// Chromium can reject chrome-extension:// preloads as cross-world mismatches.
+		// Disable the hints, not ES module imports or CSS loading. polyfill:false alone
+		// still emits <link rel="modulepreload">. Leave the Firefox build unchanged.
+		modulePreload: target === "chromium" ? false : { polyfill: false },
 		rollupOptions: {
 			input: {
 				popup: resolve(root, "popup.html"),

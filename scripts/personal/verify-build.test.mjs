@@ -34,3 +34,17 @@ test("missing WASM blocks the artifact", () => fixture(root => { rmSync(join(roo
 test("invalid WASM blocks the artifact", () => fixture(root => { writeFileSync(join(root,"wasm/vault_crypto_bg.wasm"),"bad"); assert.throws(() => verifyBuild(root)); }));
 test("private key files block the artifact", () => fixture(root => { writeFileSync(join(root,"secret.pem"),"fixture"); assert.throws(() => verifyBuild(root)); }));
 test("source maps block the artifact", () => fixture(root => { writeFileSync(join(root,"background.js.map"),"fixture"); assert.throws(() => verifyBuild(root)); }));
+
+for (const tag of [
+	'<link rel="modulepreload" crossorigin href="/chunks/core.js">',
+	"<link href='/chunks/core.js' rel='modulepreload'>",
+	'<link rel=modulepreload href=/chunks/core.js>',
+	'<LINK REL="preload MODULEPRELOAD" href="/chunks/core.js">',
+]) test(`modulepreload blocks the Chromium artifact: ${tag}`, () => fixture(root => {
+	writeFileSync(join(root, "offscreen.html"), `<html><head>${tag}</head></html>`);
+	assert.throws(() => verifyBuild(root), /Chromium modulepreload hint/);
+}));
+test("module scripts and stylesheet links remain allowed", () => fixture(root => {
+	writeFileSync(join(root, "popup.html"), '<script type="module" crossorigin src="/popup.js"></script><link rel="stylesheet" href="/assets/ui.css">');
+	verifyBuild(root);
+}));

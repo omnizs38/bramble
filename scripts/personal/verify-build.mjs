@@ -36,6 +36,9 @@ export function verifyBuild(directory) {
 			else {
 				assert(stat.isFile(), `Unexpected file type: ${name}`);
 				const bytes = readFileSync(full);
+				if (/\.html$/i.test(name)) {
+					assert.doesNotMatch(bytes.toString("utf8"), /<link\b[^>]*\brel\s*=\s*(?:"[^">]*\bmodulepreload\b[^">]*"|'[^'>]*\bmodulepreload\b[^'>]*'|modulepreload\b)/i, `Chromium modulepreload hint in ${name}`);
+				}
 				files.push({ path: relative(root, full).split("\\").join("/"), bytes: bytes.length, sha256: createHash("sha256").update(bytes).digest("hex") });
 			}
 		}

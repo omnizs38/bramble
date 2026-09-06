@@ -159,3 +159,15 @@ preserved. CI re-extracts, recompiles and formats catalogs, then requires a clea
 before building, so stale checked-in production messages fail early. Browser selectors and
 timeouts were not loosened. Machine-readable Chromium E2E and transport results are included
 in the report artifact, including on failures.
+
+## Chromium extension preload compatibility
+
+Chromium can reject `chrome-extension://` modulepreload hints as cross-world resource
+mismatches, then warn that the preloads were unused. The Chromium Vite build disables module
+preload hints rather than suppressing browser diagnostics. Native ES module imports and Vite's
+CSS loading remain enabled; Firefox keeps its previous preload configuration. No CSP,
+permissions, or web-accessible resources were broadened.
+
+The build validator rejects modulepreload links in generated HTML. The browser regression
+creates a vault with real offscreen crypto, confirms the offscreen document exists without
+preload hints, and opens the lazy tools UI with its stylesheet applied.
