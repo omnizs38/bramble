@@ -171,3 +171,9 @@ permissions, or web-accessible resources were broadened.
 The build validator rejects modulepreload links in generated HTML. The browser regression
 creates a vault with real offscreen crypto, confirms the offscreen document exists without
 preload hints, and opens the lazy tools UI with its stylesheet applied.
+
+The preload change also exposed a startup ordering issue: `hasDocument()` may return true
+while an in-flight `createDocument()` is still loading the module receiver. Concurrent callers
+now join the creation promise before and after the asynchronous existence probe. Three
+regressions reproduce the old early-send behavior and verify that failed creation propagates
+without dispatching the waiting operation. Crypto operations are not retried or duplicated.

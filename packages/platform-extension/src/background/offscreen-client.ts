@@ -27,7 +27,13 @@ let creating: Promise<void> | null = null;
 /** Create the offscreen crypto document if absent (Chrome only); no-op on Firefox. */
 export async function ensureOffscreen(): Promise<void> {
 	if (!useOffscreenDoc) return;
-	if (await api.offscreen.hasDocument?.()) return;
+	// hasDocument can become true before createDocument finishes loading ES modules
+	// and registering the receiver. Existence is not readiness during our creation.
+	if (creating) return creating;
+	const exists = await api.offscreen.hasDocument?.();
+	// Another caller may have started creation while the existence probe awaited.
+	if (creating) return creating;
+	if (exists) return;
 	if (!creating) {
 		creating = api.offscreen
 			.createDocument({

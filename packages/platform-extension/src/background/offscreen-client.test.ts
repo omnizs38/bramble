@@ -74,3 +74,84 @@ describe("lazy in-process sync host", () => {
 		expect(host.loads).toBe(0);
 	});
 });
+
+describe("Chromium offscreen creation readiness", () => {
+	function deferred<T>() {
+		let resolve!: (value: T) => void;
+		let reject!: (error: Error) => void;
+		const promise = new Promise<T>((yes, no) => {
+			resolve = yes;
+			reject = no;
+		});
+		return { promise, resolve, reject };
+	}
+	const flush = () => new Promise<void>((resolve) => setTimeout(resolve, 0));
+	function mockChrome(hasDocument: () => Promise<boolean>, createDocument: () => Promise<void>) {
+		const sendMessage = vi.fn(async () => ({ ok: true }));
+		vi.stubGlobal("chrome", {
+			runtime: { sendMessage },
+			offscreen: {
+				hasDocument,
+				createDocument,
+				Reason: { WORKERS: "WORKERS", CLIPBOARD: "CLIPBOARD", WEB_RTC: "WEB_RTC" },
+			},
+		});
+		return sendMessage;
+	}
+	it("waits for createDocument even when the unfinished document already exists", async () => {
+		const loading = deferred<void>();
+		let exists = false;
+		const createDocument = vi.fn(() => {
+			exists = true;
+			return loading.promise;
+		});
+		const sendMessage = mockChrome(async () => exists, createDocument);
+		const client = await import("./offscreen-client");
+		const first = client.ensureOffscreen();
+		await flush();
+		expect(createDocument).toHaveBeenCalledOnce();
+		const second = client.sendToOffscreen({ type: "SYNC_ROSTER_SYNC" });
+		await flush();
+		expect(sendMessage).not.toHaveBeenCalled();
+		loading.resolve();
+		await first;
+		await second;
+		expect(createDocument).toHaveBeenCalledOnce();
+		expect(sendMessage).toHaveBeenCalledOnce();
+	});
+	it("joins creation that began while its existence probe was pending", async () => {
+		const probe = deferred<boolean>();
+		const loading = deferred<void>();
+		const hasDocument = vi.fn().mockReturnValueOnce(probe.promise).mockResolvedValue(false);
+		const createDocument = vi.fn(() => loading.promise);
+		const sendMessage = mockChrome(hasDocument, createDocument);
+		const client = await import("./offscreen-client");
+		const first = client.sendToOffscreen({ type: "SYNC_ROSTER_SYNC" });
+		const second = client.ensureOffscreen();
+		await flush();
+		expect(createDocument).toHaveBeenCalledOnce();
+		probe.resolve(true);
+		await flush();
+		expect(sendMessage).not.toHaveBeenCalled();
+		loading.resolve();
+		await Promise.all([first, second]);
+		expect(sendMessage).toHaveBeenCalledOnce();
+	});
+	it("propagates a failed creation to waiting callers without sending their operation", async () => {
+		const loading = deferred<void>();
+		let exists = false;
+		const createDocument = vi.fn(() => {
+			exists = true;
+			return loading.promise;
+		});
+		const sendMessage = mockChrome(async () => exists, createDocument);
+		const client = await import("./offscreen-client");
+		const first = client.ensureOffscreen();
+		await flush();
+		const second = client.sendToOffscreen({ type: "SYNC_ROSTER_SYNC" });
+		const results = Promise.allSettled([first, second]);
+		loading.reject(new Error("offscreen load failed"));
+		expect((await results).map((r) => r.status)).toEqual(["rejected", "rejected"]);
+		expect(sendMessage).not.toHaveBeenCalled();
+	});
+});
