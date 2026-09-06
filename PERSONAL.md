@@ -81,9 +81,9 @@ WASM negative checks now use `assert.throws`: the old helper caught its own fail
 and could pass when the expected operation did not throw. Crypto algorithms, parameters,
 permissions, and the vault format are unchanged.
 
-The new code needs its own green CI run; previous Chromium E2E results for `64ce489d` are
-not results for this personal branch. Larger optimizations and user-facing features are
-separate follow-up changes after choosing their scope and measuring a baseline.
+Each change needs its own green CI run; previous Chromium E2E results for `64ce489d` are
+not results for this personal branch. The selected follow-up features and optimizations are
+described below; benchmark results are separate from browser test results.
 
 ## Rust audit follow-up
 
@@ -149,3 +149,13 @@ The panel disappears when the vault locks. All tests use synthetic entries.
 
 The personal E2E suite additionally checks saved-search persistence with no plaintext local
 preferences, and merge/Archive behavior using the real extension and WASM.
+
+## Production UI regression guard
+
+The first feature CI run exposed missing compiled messages: both new browser tests timed out
+looking for the Vault tools button. The catalogs are now extracted and compiled for every
+existing locale. New strings fall back to English until translated; existing translations are
+preserved. CI re-extracts, recompiles and formats catalogs, then requires a clean catalog diff
+before building, so stale checked-in production messages fail early. Browser selectors and
+timeouts were not loosened. Machine-readable Chromium E2E and transport results are included
+in the report artifact, including on failures.

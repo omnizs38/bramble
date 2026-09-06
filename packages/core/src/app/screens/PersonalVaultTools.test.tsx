@@ -4,6 +4,7 @@ import { I18nProvider } from "@lingui/react";
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
 import type { Entry } from "../../hooks/useVault";
+import { messages } from "../../locales/en/messages";
 import { makeSavedSearch } from "../../vault/personal-tools";
 import PersonalVaultTools from "./PersonalVaultTools";
 import { DEFAULT_SEARCH } from "./VaultHome/vault-search";
@@ -18,7 +19,7 @@ const vault = vi.hoisted(() => ({
 }));
 vi.mock("../../hooks/useVault", () => ({ useVault: () => vault }));
 beforeAll(() => {
-	i18n.load("en", {});
+	i18n.load("en", messages);
 	i18n.activate("en");
 });
 beforeEach(() => {

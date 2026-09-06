@@ -147,6 +147,10 @@ msgstr "Un dispositivo si è connesso con il Suo codice di abbinamento. Verifich
 #~ msgid "A device has connected with your pairing code. Check that it is showing this exact number, then approve. Your vault has not been sent yet."
 #~ msgstr "Un dispositivo si è connesso con il suo codice di abbinamento. Controlli che mostri esattamente questo numero, quindi approvi. La sua cassaforte non è stata ancora inviata."
 
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "A new merged login will be created. Originals will be archived, not deleted, in the same vault write. Restore them from Archive if needed."
+msgstr ""
+
 #: packages/core/src/app/screens/Settings/components/RecoveryCodeSection.tsx
 msgid "A one-time backup code that unlocks your vault if you're locked out."
 msgstr "Codice di backup usa e getta che sblocca il tuo Vault in caso di blocco."
@@ -171,6 +175,10 @@ msgstr "ID della chiave di accesso"
 #: packages/core/src/app/screens/VaultHome/SelectionBar.tsx
 msgid "Actions"
 msgstr "Azioni"
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Active"
+msgstr ""
 
 #: packages/core/src/app/screens/Settings/components/TapToUnlockSection.tsx
 msgid "Add"
@@ -307,12 +315,21 @@ msgstr "Mela"
 
 #: packages/core/src/app/bulk-actions/archive.tsx
 #: packages/core/src/app/screens/EntryDetail/EntryDetail.tsx
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
 msgid "Archive"
 msgstr "Archiviare"
 
 #: packages/core/src/app/screens/EntryDetail/EntryDetail.tsx
 msgid "Archive entry"
 msgstr "Archiviare elemento"
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Archive saved search"
+msgstr ""
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Archive this saved search? You can restore its note from Archive."
+msgstr ""
 
 #: packages/core/src/app/screens/EntryDetail/EntryDetail.tsx
 msgid "Archived"
@@ -379,6 +396,10 @@ msgstr "Invio automatico dopo il riempimento"
 msgid "Autofill on web pages"
 msgstr "Compilazione automatica sulle pagine web"
 
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Automatic merging is blocked because these fields differ or need manual review:"
+msgstr ""
+
 #: packages/core/src/app/screens/Import/components/KdbxUnlock.tsx
 msgid "Back"
 msgstr "Indietro"
@@ -390,6 +411,10 @@ msgstr "Tornare al vault"
 #: packages/core/src/app/screens/Settings/components/BackupSection.tsx
 msgid "Back up now"
 msgstr "Esegui backup ora"
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Back without changes"
+msgstr ""
 
 #. placeholder {0}: runningIds.size
 #: packages/core/src/app/screens/Settings/components/BackupSection.tsx
@@ -559,6 +584,7 @@ msgstr "Impossibile salvare questo codice"
 #: packages/core/src/app/screens/Auth/Auth.tsx
 #: packages/core/src/app/screens/CreateEntry/EntryForm.tsx
 #: packages/core/src/app/screens/EntryDetail/EntryDetail.tsx
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
 #: packages/core/src/app/screens/Settings/components/BackupSection.tsx
 #: packages/core/src/app/screens/Settings/components/BrowserPairingSection.tsx
 #: packages/core/src/app/screens/Settings/components/DeleteVaultSection.tsx
@@ -570,6 +596,10 @@ msgstr "Impossibile salvare questo codice"
 #: packages/core/src/app/screens/Settings/components/TapToUnlockSection.tsx
 msgid "Cancel"
 msgstr "Annullare"
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "candidate logins"
+msgstr ""
 
 #: packages/core/src/app/entry-modes/card.tsx
 msgid "card number"
@@ -630,6 +660,10 @@ msgstr "Verifica in corso…"
 #: packages/core/src/app/screens/Restore/RestoreShell.tsx
 msgid "Choose a .bramble file"
 msgstr "Scegli un file .bramble"
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Choose a different saved search name."
+msgstr ""
 
 #: packages/core/src/app/screens/Auth/Auth.tsx
 msgid "Choose a different vault"
@@ -692,6 +726,10 @@ msgstr "Chiudere"
 msgid "Close import"
 msgstr "Chiudere l'importazione"
 
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Close tools"
+msgstr ""
+
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Cloud"
 msgstr "Nuvola"
@@ -716,6 +754,10 @@ msgstr "Prossimamente"
 msgid "Confirm"
 msgstr "Conferma"
 
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Confirm archive"
+msgstr ""
+
 #: packages/core/src/app/screens/Settings/components/SyncConnectSection.tsx
 msgid "Confirm disconnect"
 msgstr "Confermare la disconnessione"
@@ -728,6 +770,10 @@ msgstr "Confermi la sua identità"
 #: packages/core/src/app/screens/VaultSetup/components/PasswordCard.tsx
 msgid "Confirm master password"
 msgstr "Confermare la password principale"
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Confirm merge and archive originals"
+msgstr ""
 
 #: packages/core/src/app/screens/Settings/components/MasterPasswordSection.tsx
 msgid "Confirm new password"
@@ -853,6 +899,10 @@ msgstr "Copia il codice di verifica"
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Corn"
 msgstr "Mais"
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Could not complete this action. If the vault changed, open a new preview and try again."
+msgstr ""
 
 #: packages/core/src/app/screens/Settings/components/DesktopLinkSection.tsx
 msgid "Could not sync with the desktop app."
@@ -1293,6 +1343,10 @@ msgstr "I file vengono letti solo su questo dispositivo. Nulla viene caricato. E
 msgid "Filter by type"
 msgstr "Filtra per tipo"
 
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Find duplicates"
+msgstr ""
+
 #: packages/core/src/app/entry-modes/ssh-key.tsx
 msgid "Fingerprint"
 msgstr "Impronta digitale"
@@ -1671,6 +1725,10 @@ msgstr "Collegato a questo browser, ma l'app condivide un vault diverso, non que
 msgid "Lion"
 msgstr "Leone"
 
+#: packages/core/src/app/routes/VaultHomeRoute.tsx
+msgid "Loading tools…"
+msgstr ""
+
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Lock"
 msgstr "Bloccare"
@@ -1734,6 +1792,14 @@ msgstr "Password master aggiornato."
 msgid "Matching tags"
 msgstr "Tag corrispondenti"
 
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Merge up to 20 logins at once. Cards, notes, SSH keys and archived entries are excluded."
+msgstr ""
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Merged copy created. Originals are in Archive."
+msgstr ""
+
 #: packages/core/src/app/screens/Settings/components/AppearanceSection.tsx
 msgid "Mode"
 msgstr "Modalità"
@@ -1765,6 +1831,7 @@ msgstr "Fungo"
 #: packages/core/src/app/entry-modes/card.tsx
 #: packages/core/src/app/entry-modes/login.tsx
 #: packages/core/src/app/entry-modes/ssh-key.tsx
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
 msgid "Name"
 msgstr "Nome"
 
@@ -1812,6 +1879,10 @@ msgstr "Nessun elemento archiviato trovato corrispondente alla ricerca."
 #: packages/core/src/app/entry-modes/login.tsx
 #~ msgid "No authenticator QR code found on the page. Make sure it's visible, then retry, or paste the setup key."
 #~ msgstr "Nessun codice QR dell'autenticatore trovato sulla pagina. Assicurati che sia visibile, quindi riprova o incolla la chiave di configurazione."
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "No duplicate candidates found."
+msgstr ""
 
 #: packages/core/src/app/screens/Import/ImportShell.tsx
 msgid "No importable items were found in this database."
@@ -1882,6 +1953,7 @@ msgstr "Non ora"
 #: packages/core/src/app/entry-modes/card.tsx
 #: packages/core/src/app/entry-modes/login.tsx
 #: packages/core/src/app/entry-modes/ssh-key.tsx
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
 #: packages/core/src/app/screens/VaultHome/VaultSearchBar.tsx
 msgid "Notes"
 msgstr "Note"
@@ -1939,6 +2011,10 @@ msgstr "Offerta di salvare i login"
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Older version on the other device? Compare this instead:"
 msgstr "Versione più vecchia sull’altro dispositivo? Confronti invece questo:"
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "On-demand scan of active logins with the same username and exact site origins. The scan runs locally without sending data to external services. Different credentials are never combined automatically."
+msgstr ""
 
 #: packages/core/src/app/screens/Settings/components/BackupSection.tsx
 msgid "One-click sign-in for {name} is coming in a future update. For now, pick a provider under \"Bring your own storage\"."
@@ -2121,6 +2197,10 @@ msgstr "Le password non corrispondono"
 msgid "Passwords don't match"
 msgstr "Le password non corrispondono"
 
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Passwords, TOTP, URLs, policies and all other non-description fields are identical. Their values are not shown here."
+msgstr ""
+
 #: packages/core/src/app/screens/VaultSetup/components/JoinCard.tsx
 msgid "Paste code instead"
 msgstr "Incolla il codice"
@@ -2192,6 +2272,10 @@ msgstr "Premere Invio / inviare il modulo subito dopo aver compilato le credenzi
 #: packages/core/src/app/entry-modes/tags.tsx
 msgid "Press Enter or comma to add a tag. Press the left arrow to move into the tags you have already added, then Backspace to remove one. Press the down arrow for suggestions."
 msgstr "Premere Invio o la virgola per aggiungere un tag. Premere la freccia sinistra per spostarsi nei tag già aggiunti, quindi Backspace per rimuoverne uno. Premere la freccia giù per visualizzare i suggerimenti."
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Preview merge"
+msgstr ""
 
 #: packages/core/src/app/entry-modes/ssh-key.tsx
 msgid "private key"
@@ -2386,6 +2470,10 @@ msgstr "Ripristina vault"
 msgid "Restoring…"
 msgstr "Ripristino in corso…"
 
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Review duplicate merge"
+msgstr ""
+
 #. placeholder {0}: provider.label
 #: packages/core/src/app/screens/Import/ImportShell.tsx
 msgid "Review what we found in your {0} export"
@@ -2447,6 +2535,10 @@ msgstr "Salvare un file .kdbx apribile con KeePassXC o qualsiasi app KeePass, ut
 msgid "Save an encrypted .bramble copy of your vault. It still needs your master password to open."
 msgstr "Salva una copia crittografata .bramble del tuo vault. Per aprirla è comunque necessaria la tua password principale."
 
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Save current search"
+msgstr ""
+
 #: packages/core/src/app/components/RecoveryCodeDisplay.tsx
 msgid "Save it somewhere safe and offline now. It's the only way back in if you forget your master password and lose your security keys, and we can't recover it for you."
 msgstr "Salvalo in un luogo sicuro e offline ora. È l'unico modo per riaccedere se dimentichi la password principale e perdi le chiavi di sicurezza, e noi non possiamo recuperarla per te."
@@ -2458,6 +2550,18 @@ msgstr "Salvare in un nuovo login"
 #: packages/core/src/app/components/RecoveryCodeDisplay.tsx
 msgid "Save your recovery code"
 msgstr "Salva il codice di recupero"
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Saved search name"
+msgstr ""
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Saved searches"
+msgstr ""
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Saved searches are encrypted notes inside this vault. They follow its backups, sync and key changes; nothing is saved in plaintext preferences."
+msgstr ""
 
 #: packages/core/src/app/screens/CreateEntry/EntryForm.tsx
 #: packages/core/src/app/screens/Settings/components/MasterPasswordSection.tsx
@@ -2503,6 +2607,10 @@ msgstr "Forbici"
 #: packages/core/src/app/screens/TotpSetup/TotpSetup.tsx
 msgid "Search logins"
 msgstr "Cerca nei login"
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Search saved in this vault."
+msgstr ""
 
 #: packages/core/src/app/screens/VaultHome/VaultSearchBar.tsx
 msgid "Search vault"
@@ -2641,6 +2749,10 @@ msgstr "Mostrare tutto ciò che ha il tag {tag}"
 #: packages/core/src/app/screens/Settings/components/GeneralSection.tsx
 msgid "Show matching logins above the keyboard for one-tap autofill."
 msgstr "Mostra i login corrispondenti sopra la tastiera per l'autocompletamento con un tocco."
+
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Show more groups"
+msgstr ""
 
 #: packages/core/src/app/entry-modes/ssh-key.tsx
 msgid "Show passphrase"
@@ -2788,6 +2900,7 @@ msgid "Tagging…"
 msgstr "Aggiunta tag…"
 
 #: packages/core/src/app/entry-modes/tags.tsx
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
 msgid "Tags"
 msgstr "Tag"
 
@@ -3320,6 +3433,10 @@ msgstr "Dispositivo non nominato"
 msgid "Unsigned"
 msgstr "Non firmato"
 
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Up to 30 active saved searches; query length up to 256 characters."
+msgstr ""
+
 #: packages/core/src/app/screens/Settings/components/UpdatesSection.tsx
 msgid "Update and restart"
 msgstr "Aggiornare e riavviare"
@@ -3412,6 +3529,11 @@ msgstr "Vault pronto"
 #: packages/core/src/app/screens/Restore/RestoreShell.tsx
 msgid "Vault restored"
 msgstr "Vault ripristinato"
+
+#: packages/core/src/app/routes/VaultHomeRoute.tsx
+#: packages/core/src/app/screens/PersonalVaultTools.tsx
+msgid "Vault tools"
+msgstr ""
 
 #: packages/core/src/app/OptionsApp.tsx
 msgid "Vault unlocked"
