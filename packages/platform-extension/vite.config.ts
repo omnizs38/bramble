@@ -1,4 +1,4 @@
-import { copyFileSync, mkdirSync } from "node:fs";
+import { copyFileSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { resolve } from "node:path";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
@@ -31,6 +31,21 @@ export default defineConfig({
 			writeBundle() {
 				mkdirSync(outDir, { recursive: true });
 				copyFileSync(manifestSrc, resolve(outDir, "manifest.json"));
+			},
+		},
+		{
+			// The offscreen document pulls its chunks in lazily (crypto work is driven
+			// by runtime messages, not at load), so Vite's injected <link rel="modulepreload">
+			// tags never get used in time. Chromium then logs a "cross-world extension
+			// resource mismatch" / "preloaded but not used" warning for each chunk. Strip
+			// the modulepreload tags from offscreen.html only; popup/options keep theirs.
+			name: "strip-offscreen-modulepreload",
+			enforce: "post",
+			writeBundle() {
+				const htmlPath = resolve(outDir, "offscreen.html");
+				const html = readFileSync(htmlPath, "utf8");
+				const stripped = html.replace(/[\t ]*<link rel="modulepreload"[^>]*>\r?\n?/g, "");
+				if (stripped !== html) writeFileSync(htmlPath, stripped);
 			},
 		},
 		{
