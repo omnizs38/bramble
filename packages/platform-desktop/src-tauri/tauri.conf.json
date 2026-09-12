@@ -1,7 +1,7 @@
 {
 	"$schema": "../node_modules/@tauri-apps/cli/config.schema.json",
 	"productName": "Bramble",
-	"version": "0.6.0",
+	"version": "0.8.0",
 	"identifier": "app.bramble.desktop",
 	"build": {
 		"frontendDist": "../dist",
@@ -66,6 +66,12 @@
 			"deb": {
 				"section": "utils",
 				"priority": "optional"
+			}
+		},
+		"windows": {
+			"nsis": {
+				"installMode": "currentUser",
+				"installerHooks": "./windows/hooks.nsh"
 			}
 		}
 	},

@@ -49,6 +49,11 @@ msgstr "{0, plural, one {Möchten Sie # Eintrag löschen?} other {Möchten Sie #
 msgid "{0} · added {1}"
 msgstr "{0} · hinzugefügt am {1}"
 
+#. placeholder {0}: d.domain
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "{0} (your domain)"
+msgstr "{0} (Ihre Domain)"
+
 #: packages/core/src/app/bulk-actions/tags.tsx
 msgid "{affected, plural, one {Tag # entry} other {Tag # entries}}"
 msgstr "{affected, plural, one {# Eintrag taggen} other {# Einträge taggen}}"
@@ -246,15 +251,37 @@ msgstr "Tag {added} hinzugefügt. {0} Tags."
 msgid "Added when you create a passkey on a site with Bramble. Remove to delete."
 msgstr "Hinzugefügt, wenn Sie auf einer Website mit Bramble ein Passkey erstellen. Entfernen zum Löschen."
 
-#: packages/core/src/app/entry-modes/login.tsx
-#: packages/core/src/app/screens/Settings/components/BackupSection.tsx
-#: packages/core/src/app/screens/Settings/components/SyncConnectSection.tsx
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Addy needs a domain before it can create an alias."
+msgstr "Addy benötigt eine Domain, bevor ein Alias erstellt werden kann."
+
+#: packages/core/src/app/components/ui/advanced-disclosure.tsx
 msgid "Advanced"
 msgstr "Erweitert"
 
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Aeroplane"
 msgstr "Flugzeug"
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Alias domain"
+msgstr "Alias-Domain"
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Alias format"
+msgstr "Alias-Format"
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Alias provider"
+msgstr "Alias-Anbieter"
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Alias style"
+msgstr "Alias-Stil"
+
+#: packages/core/src/app/screens/Settings/Settings.tsx
+msgid "Aliases"
+msgstr "Aliasse"
 
 #: packages/core/src/app/screens/VaultHome/VaultSearchBar.tsx
 msgid "All"
@@ -296,6 +323,14 @@ msgstr "Ein Endpunkt, der Ihre eigenen ICE-Server als JSON zurückgibt. Standard
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Anchor"
 msgstr "Anker"
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "API key"
+msgstr "API-Schlüssel"
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "API key (leave blank to keep the saved one)"
+msgstr "API-Schlüssel (leer lassen, um den gespeicherten zu behalten)"
 
 #: packages/core/src/app/screens/Settings/components/AppearanceSection.tsx
 msgid "Appearance"
@@ -378,6 +413,10 @@ msgstr "Nach dem Ausfüllen automatisch absenden"
 #: packages/core/src/app/screens/Settings/components/GeneralSection.tsx
 msgid "Autofill on web pages"
 msgstr "Autofill auf Webseiten"
+
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Avoid look-alike characters (0 O l 1)"
+msgstr "Verwechselbare Zeichen vermeiden (0 O l 1)"
 
 #: packages/core/src/app/screens/Import/components/KdbxUnlock.tsx
 msgid "Back"
@@ -476,6 +515,10 @@ msgstr "Bramble konnte den Schlüsselspeicher dieses Geräts nicht sicher aktual
 msgid "Bramble hit an unexpected error. Your vault is safe — it stays encrypted on this device. Try reloading; if it keeps happening, reopen the app."
 msgstr "Bramble ist auf einen unerwarteten Fehler gestoßen. Ihr Tresor ist sicher – er bleibt auf diesem Gerät verschlüsselt. Versuchen Sie, die Seite neu zu laden; sollte dies weiterhin passieren, öffnen Sie die Anwendung erneut."
 
+#: packages/core/src/app/components/ReviewNudgeCard.tsx
+#~ msgid "Bramble is built by one person"
+#~ msgstr ""
+
 #: packages/core/src/app/screens/Settings/components/SupportSection.tsx
 msgid "Bramble is free and open source. If it's useful to you, a tip helps keep it going. Scan a code with your wallet, or copy the address. Thank you."
 msgstr "Bramble ist kostenlos und Open Source. Falls es für Sie nützlich ist, hilft ein Trinkgeld, es am Laufen zu halten. Scannen Sie einen Code mit Ihrer Wallet oder kopieren Sie die Adresse. Vielen Dank."
@@ -517,7 +560,7 @@ msgid "Bramble will never delete anything here, so this can use a credential tha
 msgstr "Bramble wird hier niemals etwas löschen, daher können hierfür Anmeldedaten verwendet werden, die das nicht dürfen. Werden sie gestohlen, können sie Ihren Backup-Verlauf nicht zerstören."
 
 #: packages/core/src/app/components/EntryRow.tsx
-#: packages/core/src/app/entry-modes/login.tsx
+#: packages/core/src/app/components/ui/password-strength-meter.tsx
 msgid "Breached"
 msgstr "Kompromittiert"
 
@@ -554,6 +597,7 @@ msgid "Can't save this code"
 msgstr "Dieser Code kann nicht gespeichert werden"
 
 #: packages/core/src/app/components/EntryRow.tsx
+#: packages/core/src/app/components/PasswordGenerator.tsx
 #: packages/core/src/app/components/ui/confirm-dialog.tsx
 #: packages/core/src/app/components/ui/file-password-dialog.tsx
 #: packages/core/src/app/screens/Auth/Auth.tsx
@@ -570,6 +614,10 @@ msgstr "Dieser Code kann nicht gespeichert werden"
 #: packages/core/src/app/screens/Settings/components/TapToUnlockSection.tsx
 msgid "Cancel"
 msgstr "Abbrechen"
+
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Capitalize each word"
+msgstr "Jedes Wort großschreiben"
 
 #: packages/core/src/app/entry-modes/card.tsx
 msgid "card number"
@@ -611,6 +659,10 @@ msgstr "Überprüfen"
 msgid "Check for updates"
 msgstr "Nach Updates suchen"
 
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Check key"
+msgstr "Schlüssel prüfen"
+
 #: packages/core/src/app/screens/Settings/components/GeneralSection.tsx
 msgid "Check passwords for breaches"
 msgstr "Passwörter auf Sicherheitslücken prüfen"
@@ -618,6 +670,10 @@ msgstr "Passwörter auf Sicherheitslücken prüfen"
 #: packages/core/src/app/entry-modes/card.tsx
 msgid "Check the digits; that isn't a valid card number."
 msgstr "Überprüfen Sie die Ziffern; das ist keine gültige Kartennummer."
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Check the key first, to load the choices this provider needs."
+msgstr "Prüfen Sie zuerst den Schlüssel, um die Optionen zu laden, die dieser Anbieter benötigt."
 
 #: packages/core/src/app/screens/VaultSetup/VaultSetup.tsx
 msgid "Check this matches"
@@ -669,6 +725,10 @@ msgstr "Wählen Sie aus, wo verschlüsselte Backups gespeichert werden sollen. B
 msgid "Choose where to store your encrypted vault and pick a master password."
 msgstr "Wählen Sie den Speicherort für Ihren verschlüsselten Tresor und legen Sie ein Master-Passwort fest."
 
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Choose..."
+msgstr "Auswählen…"
+
 #: packages/core/src/app/screens/Settings/components/GeneralSection.tsx
 msgid "Clear after"
 msgstr "Löschen nach"
@@ -711,6 +771,10 @@ msgstr "Codes sind absichtlich kurzlebig. Erstellen Sie einen neuen, wenn Ihr an
 #: packages/core/src/app/screens/Settings/components/BackupSection.tsx
 msgid "Coming soon"
 msgstr "Demnächst verfügbar"
+
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Comma (,)"
+msgstr "Komma (,)"
 
 #: packages/core/src/app/screens/Settings/components/RecoveryCodeSection.tsx
 msgid "Confirm"
@@ -787,6 +851,16 @@ msgstr "Verbunden {0}"
 msgid "Connected to {connected}. It is syncing this vault and can fill from it."
 msgstr "Verbunden mit {connected}. Er synchronisiert diesen Tresor und kann Daten daraus automatisch ausfüllen."
 
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Connected."
+msgstr "Verbunden."
+
+#. placeholder {0}: connected.quota.used
+#. placeholder {1}: connected.quota.limit
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Connected. {0} of {1} aliases used."
+msgstr "Verbunden. {0} von {1} Aliassen verwendet."
+
 #: packages/core/src/app/screens/VaultSetup/VaultSetup.tsx
 msgid "Connecting to your other device…"
 msgstr "Verbindung zu Ihrem anderen Gerät wird hergestellt..."
@@ -824,6 +898,7 @@ msgid "Copied {copied}"
 msgstr "Kopiert {copied}"
 
 #: packages/core/src/app/components/EntryRow.tsx
+#: packages/core/src/app/components/PasswordGenerator.tsx
 #: packages/core/src/app/components/RecoveryCodeDisplay.tsx
 #: packages/core/src/app/screens/Settings/components/RotateSecretSection.tsx
 #: packages/core/src/app/screens/Settings/components/SyncConnectSection.tsx
@@ -926,6 +1001,11 @@ msgstr "Erstellen Sie einen neuen Tresor zusätzlich zu Ihren bestehenden, mit e
 #: packages/core/src/app/screens/Settings/components/BackupSection.tsx
 msgid "Create an access key with read and write access to a bucket, then paste it below. For the bucket you can paste its full URL (https://host/bucket)."
 msgstr "Erstellen Sie einen Zugangsschlüssel mit Lese- und Schreibzugriff auf einen Bucket und fügen Sie ihn unten ein. Für den Bucket können Sie dessen vollständige URL (https://host/bucket) einfügen."
+
+#. placeholder {0}: descriptor.label
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Create an API key at {0}"
+msgstr "API-Schlüssel erstellen unter {0}"
 
 #: packages/core/src/app/screens/Settings/components/GeneralSection.tsx
 msgid "Create and store passkeys for other sites. While on, Bramble handles all passkey prompts in this browser."
@@ -1047,6 +1127,10 @@ msgstr "Gerätecode"
 msgid "Device sync"
 msgstr "Geräresynchronisierung"
 
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Digits"
+msgstr "Ziffern"
+
 #: packages/core/src/app/screens/Settings/components/MasterPasswordSection.tsx
 msgid "Disable master password"
 msgstr "Master-Passwort deaktivieren"
@@ -1059,6 +1143,7 @@ msgstr "Master-Passwort deaktivieren?"
 msgid "Disabling…"
 msgstr "Deaktivierung..."
 
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
 #: packages/core/src/app/screens/Settings/components/DesktopLinkSection.tsx
 #: packages/core/src/app/screens/Settings/components/SyncConnectSection.tsx
 msgid "Disconnect"
@@ -1067,6 +1152,10 @@ msgstr "Verbindung trennen"
 #: packages/core/src/app/screens/Settings/components/BrowserPairingSection.tsx
 msgid "Disconnect this browser"
 msgstr "Diesen Browser trennen"
+
+#: packages/core/src/app/components/ReviewNudgeCard.tsx
+msgid "Dismiss"
+msgstr "Schließen"
 
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Dog"
@@ -1085,6 +1174,10 @@ msgstr "Fertig"
 #: packages/core/src/app/screens/Settings/components/RotateSecretSection.tsx
 msgid "Done. Your old recovery code no longer works. Save this one now: it is shown only here, and it is the only way back in if you forget your master password."
 msgstr "Fertig. Ihr alter Wiederherstellungscode funktioniert nicht mehr. Speichern Sie diesen jetzt: Er wird nur hier angezeigt und ist der einzige Weg zurück, wenn Sie Ihr Master-Passwort vergessen."
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Double-check this. Bramble cannot test it, and a wrong domain gives you addresses that quietly go nowhere."
+msgstr "Überprüfen Sie dies sorgfältig. Bramble kann es nicht testen, und eine falsche Domain liefert Ihnen Adressen, die still ins Leere laufen."
 
 #: packages/core/src/app/components/RecoveryCodeDisplay.tsx
 msgid "Download"
@@ -1124,6 +1217,14 @@ msgstr "Eintrag bearbeiten"
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Elephant"
 msgstr "Elefant"
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+#~ msgid "Email aliases"
+#~ msgstr ""
+
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Empty falls back to the standard set."
+msgstr "Bei leerem Feld wird der Standardsatz verwendet."
 
 #: packages/core/src/app/entry-modes/login.tsx
 msgid "Enable autofill"
@@ -1277,6 +1378,10 @@ msgstr "Face ID"
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
+#: packages/core/src/app/components/ui/password-strength-meter.tsx
+msgid "Fair"
+msgstr "Mittel"
+
 #: packages/core/src/app/entry-modes/custom-fields.tsx
 msgid "Field name"
 msgstr "Feldname"
@@ -1330,6 +1435,10 @@ msgstr "Allgemein"
 msgid "Generate"
 msgstr "Generieren"
 
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Generate a different email address for every site, from an account you already have. Bramble only asks your provider for an address; it never handles the mail."
+msgstr "Erzeugen Sie für jede Website eine andere E-Mail-Adresse aus einem Konto, das Sie bereits besitzen. Bramble fragt Ihren Anbieter nur nach einer Adresse; es verarbeitet niemals die E-Mails."
+
 #: packages/core/src/app/screens/Settings/components/SyncConnectSection.tsx
 msgid "Generate a new code"
 msgstr "Neuen Code generieren"
@@ -1338,6 +1447,15 @@ msgstr "Neuen Code generieren"
 msgid "Generate a one-time pairing code and listen for a device to join. No vault secrets in the code."
 msgstr "Erstellen Sie einen einmaligen Kopplungscode und warten Sie auf die Verbindung eines Geräts. Der Code enthält keine Tresorgeheimnisse."
 
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Generate another"
+msgstr "Weiteres generieren"
+
+#: packages/core/src/app/entry-modes/login.tsx
+msgid "Generate email alias"
+msgstr "E-Mail-Alias erzeugen"
+
+#: packages/core/src/app/components/PasswordGeneratorModal.tsx
 #: packages/core/src/app/entry-modes/login.tsx
 msgid "Generate password"
 msgstr "Passwort generieren"
@@ -1345,6 +1463,10 @@ msgstr "Passwort generieren"
 #: packages/core/src/app/entry-modes/login.tsx
 msgid "Generate strong password"
 msgstr "Starkes Passwort generieren"
+
+#: packages/core/src/app/components/ReviewNudgeCard.tsx
+#~ msgid "Getting on with Bramble?"
+#~ msgstr "Kommen Sie mit Bramble zurecht?"
 
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Gift"
@@ -1452,6 +1574,10 @@ msgstr "Sanduhr"
 #~ msgid "How will you unlock on this device?"
 #~ msgstr "Wie werden Sie auf diesem Gerät entsperren?"
 
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Hyphen (-)"
+msgstr "Bindestrich (-)"
+
 #: packages/core/src/app/screens/Settings/components/RotateSecretSection.tsx
 msgid "I've saved it"
 msgstr "Ich habe es gespeichert."
@@ -1509,6 +1635,10 @@ msgstr "Importiere..."
 msgid "In the Bramble extension, open Settings → Sync → Desktop app and enter this code."
 msgstr "Öffnen Sie in der Bramble-Erweiterung die Einstellungen → Synchronisation → Desktop-App und geben Sie diesen Code ein."
 
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Include a number"
+msgstr "Zahl einschließen"
+
 #: packages/core/src/app/screens/Settings/components/BrowserPairingSection.tsx
 #: packages/core/src/app/screens/Settings/components/RecoveryCodeSection.tsx
 #: packages/core/src/app/screens/Settings/components/SyncConnectSection.tsx
@@ -1537,6 +1667,10 @@ msgstr "Ist dies Ihr Gerät?"
 #: packages/core/src/app/screens/Settings/components/SyncConnectSection.tsx
 msgid "It calls itself \"{0}\". Only the symbols above prove who it is."
 msgstr "Es nennt sich \\"
+
+#: packages/core/src/app/components/ReviewNudgeCard.tsx
+#~ msgid "It's free and open source, and a review is how most people find it. If something is wrong instead, the issue tracker is the place that gets it fixed."
+#~ msgstr "Es ist kostenlos und Open Source, und die meisten Menschen finden es über Bewertungen. Wenn stattdessen etwas nicht stimmt, ist der Issue-Tracker der Ort, an dem es behoben wird."
 
 #: packages/core/src/app/screens/Import/ImportShell.tsx
 msgid "item"
@@ -1642,9 +1776,26 @@ msgstr "Zuletzt synchronisiert {0}"
 msgid "Later"
 msgstr "Später"
 
+#: packages/core/src/app/components/ReviewNudgeCard.tsx
+#: packages/core/src/app/screens/Settings/components/AboutSection.tsx
+msgid "Leave a review"
+msgstr "Bewertung hinterlassen"
+
 #: packages/core/src/app/screens/Settings/components/BackupSection.tsx
 msgid "Leave the credential fields blank to keep the ones you saved."
 msgstr "Lassen Sie die Anmeldefelder leer, um Ihre gespeicherten Daten zu behalten."
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Leave unset for your account's default domain, or pick one of your own."
+msgstr "Lassen Sie den Wert leer, um die Standard-Domain Ihres Kontos zu verwenden, oder wählen Sie eine eigene Domain."
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Leave unset to use your provider account's own default."
+msgstr "Lassen Sie den Wert leer, um den Standardwert Ihres Anbieterkontos zu verwenden."
+
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Length"
+msgstr "Länge"
 
 #: packages/core/src/app/screens/Settings/components/AppearanceSection.tsx
 msgid "Light"
@@ -1813,6 +1964,10 @@ msgstr "Keine archivierten Einträge gefunden, die Ihrer Suche entsprechen."
 #~ msgid "No authenticator QR code found on the page. Make sure it's visible, then retry, or paste the setup key."
 #~ msgstr "Kein Authentifikator-QR-Code auf der Seite gefunden. Stellen Sie sicher, dass er sichtbar ist, und versuchen Sie es erneut oder fügen Sie den Einrichtungsschlüssel ein."
 
+#: packages/core/src/app/components/ReviewNudgeCard.tsx
+#~ msgid "No company and no marketing budget, so reviews are most of how anyone hears about it. If something is broken instead, the issue tracker is faster than a star rating."
+#~ msgstr ""
+
 #: packages/core/src/app/screens/Import/ImportShell.tsx
 msgid "No importable items were found in this database."
 msgstr "Es wurden keine importierbaren Elemente in dieser Datenbank gefunden."
@@ -1861,6 +2016,10 @@ msgstr "Es wartet keine Übertragung. Starten Sie eine in der anderen App und w�
 #: packages/core/src/hooks/useVault.tsx
 msgid "No vault is selected."
 msgstr "Kein Tresor ausgewählt."
+
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "None"
+msgstr "Keine"
 
 #: packages/core/src/app/bulk-actions/tags.tsx
 msgid "None of the selected entries have this tag."
@@ -1956,6 +2115,11 @@ msgstr "Nur mit {brand} können Sie entsperren. Das Hinzufügen oder Entfernen e
 msgid "Only Face ID or a fingerprint can unlock. Adding or removing a face or fingerprint turns this off, and you'll re-enable it with your master password."
 msgstr "Nur mit Face ID oder einem Fingerabdruck können Sie entsperren. Das Hinzufügen oder Entfernen eines Gesichts oder eines Fingerabdrucks deaktiviert diese Funktion. Sie können sie mit Ihrem Master-Passwort wieder aktivieren."
 
+#. placeholder {0}: descriptor.label
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Only for a self-hosted {0}. Leave empty to use the hosted service."
+msgstr "Nur für ein selbst gehostetes {0}. Leer lassen, um den gehosteten Dienst zu verwenden."
+
 #: packages/core/src/app/screens/Settings/components/BiometricSection.tsx
 msgid "Only your passcode can unlock. Adding or removing a face or fingerprint turns this off, and you'll re-enable it with your master password."
 msgstr "Nur mit Ihrem Passcode können Sie entsperren. Das Hinzufügen oder Entfernen eines Gesichts oder eines Fingerabdrucks deaktiviert diese Funktion. Sie können sie mit Ihrem Master-Passwort wieder aktivieren."
@@ -2022,6 +2186,10 @@ msgstr "Optional (z. B. Arbeit)"
 msgid "Or add it to an existing login"
 msgstr "Oder zu einem vorhandenen Login hinzufügen"
 
+#: packages/core/src/app/components/ReviewNudgeCard.tsx
+msgid "Or something honest, either works. Reviews are how people find Bramble."
+msgstr "Oder etwas Ehrliches, beides ist in Ordnung. Über Bewertungen finden Menschen zu Bramble."
+
 #: packages/core/src/app/screens/Settings/components/DataSection.tsx
 msgid "Other vendors"
 msgstr "Andere Anbieter"
@@ -2073,6 +2241,7 @@ msgstr "Passkey als {loginName} gespeichert"
 msgid "Passkeys"
 msgstr "Passkeys"
 
+#: packages/core/src/app/components/PasswordGenerator.tsx
 #: packages/core/src/app/entry-modes/ssh-key.tsx
 msgid "Passphrase"
 msgstr "Passphrase"
@@ -2085,6 +2254,7 @@ msgstr "Passphrase (optional)"
 msgid "password"
 msgstr "Passwort"
 
+#: packages/core/src/app/components/PasswordGenerator.tsx
 #: packages/core/src/app/entry-modes/login.tsx
 #: packages/core/src/app/screens/Settings/components/BackupSection.tsx
 msgid "Password"
@@ -2149,6 +2319,10 @@ msgstr "Bleistift"
 msgid "Penguin"
 msgstr "Pinguin"
 
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Period (.)"
+msgstr "Punkt (.)"
+
 #: packages/core/src/app/screens/Settings/components/DesktopLinkSection.tsx
 msgid "Permission needed"
 msgstr "Berechtigung erforderlich"
@@ -2172,6 +2346,10 @@ msgstr "Schwein"
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Pin"
 msgstr "Reißzwecke"
+
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "PIN"
+msgstr "PIN"
 
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Pizza"
@@ -2201,6 +2379,14 @@ msgstr "Privater Schlüssel"
 msgid "Private key"
 msgstr "Privater Schlüssel"
 
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Provider"
+msgstr "Anbieter"
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Provider default"
+msgstr "Anbieterstandard"
+
 #: packages/core/src/app/entry-modes/ssh-key.tsx
 msgid "Public / private key pair"
 msgstr "Öffentliches/privates Schlüsselpaar"
@@ -2216,6 +2402,10 @@ msgstr "Öffentlicher Schlüssel"
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Rabbit"
 msgstr "Hase"
+
+#: packages/core/src/app/screens/Settings/components/AboutSection.tsx
+msgid "Rate Bramble"
+msgstr "Bramble bewerten"
 
 #: packages/core/src/app/screens/VaultSetup/components/PasswordCard.tsx
 msgid "Re-enter the password"
@@ -2332,6 +2522,10 @@ msgstr "Ersetzt den Code"
 #: packages/core/src/app/screens/Settings/components/RotateSecretSection.tsx
 msgid "Replaces the key everything in this vault is encrypted with. Worth doing if you believe a copy of the vault file has been exposed, since anything taken before cannot be opened with the new key."
 msgstr "Ersetzt den Schlüssel, mit dem alles in diesem Tresor verschlüsselt ist. Es lohnt sich, wenn Sie glauben, dass eine Kopie der Tresordatei offengelegt wurde, da alles, was zuvor entwendet wurde, mit dem neuen Schlüssel nicht geöffnet werden kann."
+
+#: packages/core/src/app/components/ReviewNudgeCard.tsx
+msgid "Report an issue"
+msgstr "Problem melden"
 
 #: packages/core/src/app/screens/Settings/components/MasterPasswordSection.tsx
 msgid "Require master password to unlock"
@@ -2464,6 +2658,10 @@ msgstr "Speichern Sie Ihren Wiederherstellungscode"
 msgid "Saving…"
 msgstr "Speicheren…"
 
+#: packages/core/src/app/components/ReviewNudgeCard.tsx
+msgid "Say something nice?"
+msgstr "Etwas Nettes sagen?"
+
 #: packages/core/src/app/entry-modes/login.tsx
 msgid "Scan authenticator QR code from current webpage"
 msgstr "Scannen Sie den Authentifikator-QR-Code von der aktuellen Webseite"
@@ -2565,9 +2763,18 @@ msgstr "Wird gesendet …"
 msgid "Sends a 5-character SHA-1 prefix of each saved password to haveibeenpwned.com (k-anonymity)"
 msgstr "Sendet einen 5-stelligen SHA-1-Präfix jedes gespeicherten Passworts an haveibeenpwned.com (k-Anonymität)"
 
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Separator"
+msgstr "Trennzeichen"
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
 #: packages/core/src/app/screens/Settings/components/BackupSection.tsx
 msgid "Server URL"
 msgstr "Server-URL"
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+#~ msgid "Server URL (self-hosted only)"
+#~ msgstr "Server-URL (nur selbst gehostet)"
 
 #: packages/core/src/app/screens/Settings/components/MasterPasswordSection.tsx
 msgid "Set password"
@@ -2696,6 +2903,10 @@ msgstr "Sortieren"
 msgid "Source code"
 msgstr "Quellcode"
 
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Space"
+msgstr "Leerzeichen"
+
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Spanner"
 msgstr "Schraubenschlüssel"
@@ -2737,10 +2948,11 @@ msgstr "Sensiblen Text speichern"
 msgid "Strawberry"
 msgstr "Erdbeere"
 
-#: packages/core/src/app/components/ui/master-password-meter.tsx
+#: packages/core/src/app/components/ui/password-strength-meter.tsx
 msgid "Strength"
 msgstr "Stärke"
 
+#: packages/core/src/app/components/ui/password-strength-meter.tsx
 #: packages/core/src/app/screens/VaultHome/VaultHome.tsx
 msgid "Strong"
 msgstr "Stark"
@@ -2752,6 +2964,10 @@ msgstr "Subdomain-Abgleich"
 #: packages/core/src/app/screens/Settings/components/SupportSection.tsx
 msgid "Support"
 msgstr "Unterstützen"
+
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Symbols to use"
+msgstr "Zu verwendende Symbole"
 
 #: packages/core/src/app/screens/Settings/components/DesktopLinkSection.tsx
 #: packages/core/src/app/screens/Settings/Settings.tsx
@@ -2828,6 +3044,10 @@ msgstr "Telefon"
 #: packages/core/src/app/screens/Settings/components/DesktopLinkSection.tsx
 #~ msgid "Test"
 #~ msgstr "Testen"
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "That does not look like a domain. Enter it on its own, like example.com, with no @ and no https://"
+msgstr "Das sieht nicht nach einer Domain aus. Geben Sie sie allein ein, wie example.com, ohne @ und ohne https://"
 
 #: packages/core/src/app/screens/Restore/RestoreShell.tsx
 msgid "That doesn't look like a Bramble backup (.bramble) file."
@@ -3186,6 +3406,10 @@ msgstr "Typ"
 msgid "Umbrella"
 msgstr "Regenschirm"
 
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Underscore (_)"
+msgstr "Unterstrich (_)"
+
 #: packages/core/src/app/components/SasDisplay.tsx
 msgid "Unicorn"
 msgstr "Einhorn"
@@ -3365,6 +3589,10 @@ msgstr "Verwenden Sie helles, dunkles oder passendes System"
 msgid "Use only digits, spaces or dashes."
 msgstr "Verwenden Sie nur Ziffern, Leerzeichen oder Bindestriche."
 
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Use password"
+msgstr "Passwort verwenden"
+
 #: packages/core/src/app/components/ui/weak-password-notice.tsx
 msgid "Use this password anyway"
 msgstr "Dennoch dieses Passwort verwenden"
@@ -3438,6 +3666,14 @@ msgstr "Version"
 msgid "Version {0} is available"
 msgstr "Version {0} ist verfügbar"
 
+#: packages/core/src/app/components/ui/password-strength-meter.tsx
+msgid "Very strong"
+msgstr "Sehr stark"
+
+#: packages/core/src/app/components/ui/password-strength-meter.tsx
+msgid "Very weak"
+msgstr "Sehr schwach"
+
 #: packages/core/src/app/entry-modes/custom-fields.tsx
 msgid "Visible"
 msgstr "Sichtbar"
@@ -3454,6 +3690,10 @@ msgstr "Warten auf die Desktop-App…"
 #: packages/core/src/app/screens/Settings/components/DeleteVaultSection.tsx
 msgid "Waiting for your key…"
 msgstr "Warte auf Ihren Schlüssel…"
+
+#: packages/core/src/app/components/ui/password-strength-meter.tsx
+msgid "Weak"
+msgstr "Schwach"
 
 #: packages/core/src/app/screens/Settings/components/BackupSection.tsx
 msgid "WebDAV URL"
@@ -3482,6 +3722,18 @@ msgstr "Willkommen bei {appName}"
 #: packages/core/src/app/screens/Settings/components/GeneralSection.tsx
 msgid "Wipe copied passwords after"
 msgstr "Löschen von kopierten Passwörtern nach"
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Word aliases include the site's name, which is easier to recognise but tells anyone who sees the address where you used it. UUID aliases reveal nothing."
+msgstr "Wort-Aliasse enthalten den Namen der Website, was die Erkennung erleichtert, aber jedem, der die Adresse sieht, verrät, wo Sie sie verwendet haben. UUID-Aliasse geben nichts preis."
+
+#: packages/core/src/app/components/PasswordGenerator.tsx
+msgid "Words"
+msgstr "Wörter"
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Words are easier to read aloud; characters are shorter."
+msgstr "Wörter sind leichter laut vorzulesen; Zeichen sind kürzer."
 
 #: packages/core/src/app/screens/Settings/components/RecoveryCodeSection.tsx
 msgid "Working…"
@@ -3552,6 +3804,10 @@ msgstr "Ihr Browser kann beim Entsperren nach Zugriff auf die Tresordatei fragen
 #: packages/core/src/app/screens/Settings/components/BiometricSection.tsx
 msgid "Your device passcode can also unlock this vault."
 msgstr "Ihr Gerätepasscode kann diesen Tresor ebenfalls entsperren."
+
+#: packages/core/src/app/screens/Settings/components/AliasSection.tsx
+msgid "Your domain"
+msgstr "Ihre Domain"
 
 #: packages/core/src/app/screens/Settings/components/RecoveryCodeSection.tsx
 msgid "Your new recovery code"
