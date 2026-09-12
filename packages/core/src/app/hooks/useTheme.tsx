@@ -37,6 +37,11 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
 	useEffect(() => {
 		const root = document.documentElement;
 		root.classList.toggle("dark", darkMode);
+		// Paint native controls (select option popups, scrollbars, date pickers) in the active
+		// scheme. Without this a dark-theme <select> popup stays light, so its options render in
+		// the app's light --foreground on a white popup and are unreadable. The .dark class also
+		// sets color-scheme in CSS; this keeps them in lockstep for an explicit override too.
+		root.style.colorScheme = darkMode ? "dark" : "light";
 		// Disarm the pre-mount OS-scheme background (theme.css); the .dark class now owns it.
 		root.classList.add("theme-ready");
 	}, [darkMode]);

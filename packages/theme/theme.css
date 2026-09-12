@@ -15,9 +15,18 @@
   html:not(.theme-ready) body {
     background-color: oklch(20.5% 0 0);
   }
+  /* Match native controls (select popups, scrollbars, form widgets) to the OS scheme
+     before the app mounts, so a pre-mount dropdown isn't light-on-white. */
+  html:not(.theme-ready) {
+    color-scheme: dark;
+  }
 }
 
 :root {
+  /* Tell the browser which scheme to paint native controls in. Without this the
+     native <select> option popup stays light in dark mode, rendering the app's light
+     --foreground text on a white popup (unreadable). Overridden by `.dark` below. */
+  color-scheme: light;
   --font-size: 16px;
   --background: oklch(98.5% 0 0);
   --foreground: oklch(20.5% 0 0);
@@ -59,6 +68,7 @@
 }
 
 .dark {
+  color-scheme: dark;
   --background: oklch(20.5% 0 0);
   --foreground: oklch(97% 0 0);
   --card: oklch(26.9% 0 0);
