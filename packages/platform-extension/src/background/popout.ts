@@ -35,20 +35,25 @@ const WIDTH = 500;
 const HEIGHT = 600;
 const CHROME_INSET = 80;
 
-/** Create the pop-out window, anchored beside `anchor` when the position is usable. Chrome rejects
- *  bounds that fall (mostly) off-screen, which used to take the whole pop-out down with them - so a
- *  rejected position falls back to letting the browser place the window. */
+/** Create the pop-out window, anchored beside `anchor` when the position is usable. Chromium can
+ * reject popup-type windows independently of their bounds, so retry without a position first and
+ * then use a normal window as a compatibility fallback. */
 async function createPopoutWindow(
 	anchor: chrome.windows.Window | undefined,
 ): Promise<chrome.windows.Window | undefined> {
 	const url = api.runtime.getURL("popup.html?detached=1");
-	const base = { url, type: "popup" as const, focused: true, width: WIDTH, height: HEIGHT };
+	const popup = { url, type: "popup" as const, focused: true, width: WIDTH, height: HEIGHT };
 	const top = (anchor?.top ?? 0) + CHROME_INSET;
 	const left = (anchor?.left ?? 0) + (anchor?.width ?? WIDTH) - WIDTH;
-	const created = await api.windows.create({ ...base, top, left }).catch(() => undefined);
-	if (!created) return api.windows.create(base).catch(() => undefined);
-	if (created.id !== undefined) {
-		// Re-assert the bounds: some platforms ignore them on create.
+	let created = await api.windows.create({ ...popup, top, left }).catch(() => undefined);
+	if (!created) created = await api.windows.create(popup).catch(() => undefined);
+	if (!created) {
+		created = await api.windows
+			.create({ url, type: "normal", focused: true, width: WIDTH, height: HEIGHT })
+			.catch(() => undefined);
+	}
+	if (created?.id !== undefined) {
+		// Re-assert the bounds: some platforms ignore them on create. Placement failure is harmless.
 		await api.windows
 			.update(created.id, { state: "normal", width: WIDTH, height: HEIGHT, top, left })
 			.catch(() => undefined);
@@ -89,13 +94,14 @@ async function popoutOpen(
 		anchor = await api.windows.getCurrent().catch(() => undefined);
 	}
 	const created = await createPopoutWindow(anchor);
-	if (created?.id !== undefined) {
-		// Track this window so the next pop-out request focuses it rather than duplicating.
-		await api.storage.session.set({ [POPOUT_WINDOW_KEY]: created.id });
-		// An unlock-only pop-out closes itself once the vault opens (see closeUnlockPopout).
-		if (payload?.reason === "unlock") {
-			await api.storage.session.set({ [POPOUT_UNLOCK_WINDOW_KEY]: created.id });
-		}
+	if (created?.id === undefined) {
+		return { ok: false, error: "Unable to open a separate window." };
+	}
+	// Track this window so the next pop-out request focuses it rather than duplicating.
+	await api.storage.session.set({ [POPOUT_WINDOW_KEY]: created.id });
+	// An unlock-only pop-out closes itself once the vault opens (see closeUnlockPopout).
+	if (payload?.reason === "unlock") {
+		await api.storage.session.set({ [POPOUT_UNLOCK_WINDOW_KEY]: created.id });
 	}
 	return { ok: true };
 }
